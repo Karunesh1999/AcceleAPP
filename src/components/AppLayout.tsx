@@ -4,8 +4,8 @@ import { SplashScreen } from "@/components/screens/SplashScreen";
 import { OnboardingScreen } from "@/components/screens/OnboardingScreen";
 import { HomeScreen } from "@/components/screens/HomeScreen";
 import { ProductsScreen } from "@/components/screens/ProductsScreen";
-import { CameraAdasScreen } from "@/components/screens/CameraAdasScreen";
-import { SupportScreen } from "@/components/screens/SupportScreen";
+import { BookingsScreen } from "@/components/screens/BookingsScreen";
+import { ProfileScreen } from "@/components/screens/ProfileScreen";
 import { ProductDetailView } from "@/components/ProductDetailView";
 import { Header } from "@/components/Header";
 import { BottomNav, type NavTab } from "@/components/BottomNav";
@@ -60,10 +60,10 @@ export function AppLayout() {
   let activeTab: NavTab = "Home";
   if (currentPath.startsWith("/products")) {
     activeTab = "Products";
-  } else if (currentPath.startsWith("/camera")) {
-    activeTab = "Camera";
-  } else if (currentPath.startsWith("/support")) {
-    activeTab = "Support";
+  } else if (currentPath.startsWith("/bookings") || currentPath.startsWith("/orders")) {
+    activeTab = "Bookings";
+  } else if (currentPath.startsWith("/profile") || currentPath.startsWith("/support")) {
+    activeTab = "Profile";
   }
 
   // Check if viewing a specific product (e.g. /product/rvc180ctd)
@@ -159,11 +159,11 @@ export function AppLayout() {
       case "Products":
         navigate("/products");
         break;
-      case "Camera":
-        navigate("/camera");
+      case "Bookings":
+        navigate("/bookings");
         break;
-      case "Support":
-        navigate("/support");
+      case "Profile":
+        navigate("/profile");
         break;
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -201,13 +201,15 @@ export function AppLayout() {
             />
           ) : (
             <>
-              {/* Top Header */}
-              <Header
-                cartCount={totalCartCount}
-                onOpenCart={() => setIsCartOpen(true)}
-                onOpenProfile={() => setIsProfileOpen(true)}
-                onOpenSearch={() => setIsSearchModalOpen(true)}
-              />
+              {/* Top Header (Shown on Home, Products, and Bookings; Profile has its own dedicated header matching design) */}
+              {activeTab !== "Profile" && (
+                <Header
+                  cartCount={totalCartCount}
+                  onOpenCart={() => setIsCartOpen(true)}
+                  onOpenProfile={() => navigate("/profile")}
+                  onOpenSearch={() => setIsSearchModalOpen(true)}
+                />
+              )}
 
               {/* View Router */}
               <main className="flex-1 bg-slate-50">
@@ -229,24 +231,30 @@ export function AppLayout() {
                   />
                 )}
 
-                {activeTab === "Camera" && (
-                  <CameraAdasScreen
+                {activeTab === "Bookings" && (
+                  <BookingsScreen
                     onOpenProduct={(prod) => navigate(`/product/${prod.sku}`)}
+                    onAddToCart={handleAddToCart}
                     soundEnabled={soundEnabled}
-                    onToggleSound={() => setSoundEnabled(!soundEnabled)}
                   />
                 )}
 
-                {activeTab === "Support" && (
-                  <SupportScreen
+                {activeTab === "Profile" && (
+                  <ProfileScreen
+                    onBack={() => navigate("/")}
+                    onOpenCart={() => setIsCartOpen(true)}
+                    cartCount={totalCartCount}
                     onOpenLiveChat={() => setIsSupportModalOpen(true)}
-                    onOpenProfile={() => setIsProfileOpen(true)}
+                    onOpenOrders={() => navigate("/bookings")}
+                    soundEnabled={soundEnabled}
+                    onToggleSound={() => setSoundEnabled(!soundEnabled)}
+                    onSignOut={() => setIsProfileOpen(true)}
                   />
                 )}
               </main>
 
               {/* Bottom Tab Bar */}
-              <BottomNav active={activeTab} setActive={handleTabChange} />
+              <BottomNav active={activeTab} setActive={handleTabChange} activeOrderCount={2} />
             </>
           )}
 

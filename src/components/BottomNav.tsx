@@ -2,38 +2,38 @@ import React from "react";
 import { 
   Home as HomeIcon, 
   LayoutGrid, 
-  Camera, 
-  Headphones 
+  ClipboardList, 
+  User 
 } from "lucide-react";
 
-export type NavTab = "Home" | "Products" | "Camera" | "Support";
+export type NavTab = "Home" | "Products" | "Bookings" | "Profile";
 
 interface BottomNavProps {
   active: NavTab;
   setActive: (tab: NavTab) => void;
-  hasHazardAlert?: boolean;
+  activeOrderCount?: number;
 }
 
 export function BottomNav({
   active,
   setActive,
-  hasHazardAlert = false,
+  activeOrderCount = 2,
 }: BottomNavProps) {
   const tabs = [
     { id: "Home" as NavTab, label: "Home", icon: HomeIcon },
     { id: "Products" as NavTab, label: "Products", icon: LayoutGrid },
     { 
-      id: "Camera" as NavTab, 
-      label: "Camera / ADAS", 
-      icon: Camera,
-      alert: hasHazardAlert
+      id: "Bookings" as NavTab, 
+      label: "Bookings", 
+      icon: ClipboardList,
+      badge: activeOrderCount > 0 ? activeOrderCount : undefined,
     },
-    { id: "Support" as NavTab, label: "Support", icon: Headphones },
+    { id: "Profile" as NavTab, label: "Profile", icon: User },
   ];
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto grid h-[74px] max-w-[430px] grid-cols-4 border-t border-slate-200 bg-white/95 px-2 backdrop-blur-xl select-none shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-      {tabs.map(({ id, label, icon: Icon, alert }) => {
+      {tabs.map(({ id, label, icon: Icon, badge }) => {
         const selected = active === id;
         return (
           <button
@@ -50,8 +50,10 @@ export function BottomNav({
 
             <div className="relative">
               <Icon className={`h-5 w-5 transition-transform ${selected ? "scale-110" : ""}`} />
-              {alert && (
-                <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+              {badge !== undefined && (
+                <span className="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#f52538] text-[9px] font-black text-white flex items-center justify-center shadow-xs">
+                  {badge}
+                </span>
               )}
             </div>
 
