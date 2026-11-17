@@ -10,7 +10,7 @@ import {
   ArrowRight,
   Flame
 } from "lucide-react";
-import nightDrive from "@/assets/night-drive.jpg";
+import acceleCar from "@/assets/accele-car.jpg";
 import rvcScene from "@/assets/rvc180-scene.png";
 import { CATEGORIES, PRODUCTS } from "@/data/mockData";
 import { LiveRadarSimulator } from "@/components/LiveRadarSimulator";
@@ -46,12 +46,13 @@ export function HomeScreen({
       <section className="px-4 pt-3">
         <div className="relative overflow-hidden rounded-[26px] border border-slate-200 bg-slate-900 shadow-md">
           <img
-            src={nightDrive}
-            alt="Driver using automotive safety technology at night"
-            className="h-[240px] w-full object-cover opacity-85"
+            src={acceleCar}
+            alt="Accele automotive technology"
+            className="h-[240px] w-full object-cover object-center opacity-90"
           />
-          {/* Gradients */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-black/20" />
+          {/* Gradients to balance light & enhance text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-black/15" />
 
           {/* Top Pill */}
           <div className="absolute left-5 top-5 rounded-md border border-white/20 bg-black/40 px-2.5 py-1 text-[8px] font-black tracking-[0.18em] text-white backdrop-blur-md">

@@ -28,18 +28,6 @@ export const ONBOARDING_SLIDES = [
     metric: "PLUG & PLAY HARNESS",
     badge: "PRO BAY READY",
   },
-  {
-    id: 3,
-    eyebrow: "30+ YEARS OF INNOVATION",
-    title: "Built to move business.",
-    highlightWord: "business.",
-    highlightColor: "#ffc21c",
-    text: "Explore pro-grade 12V automotive electronics, live inventory levels, dealer pricing, and instant RMA support in one unified app.",
-    image: rvcProduct,
-    icon: "shield",
-    metric: "ISO 9001:2015",
-    badge: "DEALER PORTAL",
-  },
 ];
 
 export const CATEGORIES: Category[] = [

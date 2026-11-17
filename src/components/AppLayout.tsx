@@ -51,23 +51,8 @@ export function AppLayout() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, [location, navigate]);
 
-  // Onboarding state
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("accele_onboarded") === "true";
-  });
-  const [stage, setStage] = useState<"splash" | "onboarding" | "app">(() => {
-    if (typeof window !== "undefined" && localStorage.getItem("accele_onboarded") === "true") {
-      return "app";
-    }
-    return "splash";
-  });
-
-  const handleFinishOnboarding = () => {
-    localStorage.setItem("accele_onboarded", "true");
-    setHasCompletedOnboarding(true);
-    setStage("app");
-  };
+  // Splash & Onboarding Stage (Always starts on splash when loaded or refreshed)
+  const [stage, setStage] = useState<"splash" | "onboarding" | "app">("splash");
 
   // Determine active tab & selected product based on URL path
   const currentPath = location.pathname;
@@ -186,25 +171,25 @@ export function AppLayout() {
 
   return (
     <div className="relative min-h-screen w-full bg-slate-50 text-slate-900 flex flex-col justify-between overflow-x-hidden selection:bg-[#f52538] selection:text-white font-sans">
-      {/* Splash Screen Mode */}
-      {stage === "splash" && !hasCompletedOnboarding && (
+      {/* 1. Splash Screen Mode */}
+      {stage === "splash" && (
         <SplashScreen
           onComplete={() => setStage("onboarding")}
           soundEnabled={soundEnabled}
         />
       )}
 
-      {/* Onboarding Carousel Mode */}
-      {stage === "onboarding" && !hasCompletedOnboarding && (
+      {/* 2. Onboarding Carousel Mode */}
+      {stage === "onboarding" && (
         <OnboardingScreen
-          onComplete={handleFinishOnboarding}
+          onComplete={() => setStage("app")}
           soundEnabled={soundEnabled}
         />
       )}
 
-      {/* Main Native App Content */}
-      {(stage === "app" || hasCompletedOnboarding) && (
-        <div className="relative flex flex-col flex-1 min-h-full bg-slate-50 text-slate-900">
+      {/* 3. Main Native App Content */}
+      {stage === "app" && (
+        <div className="relative flex flex-col flex-1 min-h-full bg-slate-50 text-slate-900 animate-in fade-in duration-300">
           {/* Product Detail Overlay Route */}
           {selectedProduct ? (
             <ProductDetailView

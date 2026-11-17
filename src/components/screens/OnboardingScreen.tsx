@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { ArrowRight, Radio, Cpu, ShieldCheck } from "lucide-react";
 import { ONBOARDING_SLIDES } from "@/data/mockData";
-import { Logo } from "@/components/Logo";
 import { playAlertBeep } from "@/lib/utils";
 
 interface OnboardingScreenProps {
@@ -28,74 +27,68 @@ export function OnboardingScreen({
   };
 
   const getSlideIcon = (iconName: string) => {
-    if (iconName === "radar") return <Radio className="h-6 w-6 text-sky-600" />;
-    if (iconName === "wiring") return <Cpu className="h-6 w-6 text-[#f52538]" />;
-    return <ShieldCheck className="h-6 w-6 text-amber-600" />;
+    if (iconName === "radar") return <Radio className="h-5 w-5 text-sky-400" />;
+    if (iconName === "wiring") return <Cpu className="h-5 w-5 text-[#ff3347]" />;
+    return <ShieldCheck className="h-5 w-5 text-amber-400" />;
   };
 
   return (
-    <main className="relative mx-auto flex min-h-[100dvh] w-full max-w-[430px] flex-col overflow-hidden bg-slate-50 text-slate-900">
-      {/* Top Image Showcase */}
-      <div className="relative h-[48dvh] min-h-[360px] overflow-hidden bg-slate-100 select-none border-b border-slate-200">
-        <img
-          src={slide.image}
-          alt={slide.title}
-          key={slide.id}
-          className={`h-full w-full ${
-            slide.id === 3 ? "object-contain p-8" : "object-cover"
-          } transition-all duration-700 animate-in fade-in`}
-        />
+    <main className="relative mx-auto flex h-full min-h-screen w-full max-w-[430px] flex-col justify-between overflow-hidden bg-slate-950 text-white select-none">
+      {/* 100% Full Screen Background Image */}
+      <img
+        src={slide.image}
+        alt={slide.title}
+        key={slide.id}
+        className="absolute inset-0 h-full w-full object-cover transition-all duration-700 animate-in fade-in"
+      />
 
-        {/* Ambient Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-slate-900/40" />
+      {/* Multi-stage Gradient Scrim for crisp text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 via-55% to-black/30 pointer-events-none" />
 
-        {/* Top Header bar with Logo & Skip */}
-        <div className="absolute left-6 right-6 top-6 flex items-center justify-between z-20">
-          <div className="bg-white/90 px-3 py-1.5 rounded-2xl backdrop-blur-md shadow-xs border border-white/60">
-            <Logo compact />
-          </div>
-          <button
-            onClick={onComplete}
-            className="rounded-full border border-white/40 bg-white/80 px-4 py-1.5 text-[11px] font-extrabold text-slate-800 backdrop-blur-md hover:bg-white transition active:scale-95 shadow-xs"
-          >
-            SKIP
-          </button>
-        </div>
+      {/* Top Header bar with Skip */}
+      <div className="relative z-20 flex items-center justify-end px-6 pt-6">
+        <button
+          onClick={onComplete}
+          className="rounded-full border border-white/20 bg-black/40 px-4 py-1.5 text-[11px] font-extrabold tracking-wider text-white backdrop-blur-md hover:bg-black/60 transition active:scale-95 shadow-sm"
+        >
+          SKIP
+        </button>
+      </div>
 
-        {/* Bottom Floating Feature Capsule */}
-        <div className="absolute bottom-4 left-6 flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white/80 bg-white/95 backdrop-blur-md shadow-md">
+      {/* Bottom Content Area: Feature Badge + Typography + Bottom Controls */}
+      <div className="relative z-20 flex flex-col px-6 pb-8 pt-4">
+        {/* Floating Feature Capsule */}
+        <div className="flex items-center gap-2.5 mb-3.5">
+          <div className="grid h-10 w-10 place-items-center rounded-xl border border-white/15 bg-white/10 backdrop-blur-md shadow-xs">
             {getSlideIcon(slide.icon)}
           </div>
-          <div className="rounded-xl border border-white/60 bg-white/90 backdrop-blur px-3 py-1.5 shadow-xs">
-            <span className="text-[9px] font-mono font-bold text-slate-800">
+          <div className="rounded-xl border border-white/15 bg-white/10 backdrop-blur-md px-3 py-1.5 shadow-xs">
+            <span className="text-[10px] font-mono font-bold tracking-wider text-slate-200">
               {slide.metric}
             </span>
           </div>
         </div>
-      </div>
 
-      {/* Slide Typography & Information */}
-      <div className="flex flex-1 flex-col px-6 pb-8 pt-5 justify-between bg-slate-50">
-        <div>
-          <p className="text-[10px] font-black tracking-[0.25em] text-[#f52538] uppercase">
-            {slide.eyebrow}
-          </p>
+        {/* Eyebrow */}
+        <p className="text-[10px] font-black tracking-[0.25em] text-[#ff3347] uppercase">
+          {slide.eyebrow}
+        </p>
 
-          <h2 className="mt-2 text-[32px] font-black leading-[1.08] tracking-[-0.04em] text-slate-900">
-            {slide.title.replace(slide.highlightWord, "")}
-            <span className="text-[#f52538]">
-              {slide.highlightWord}
-            </span>
-          </h2>
+        {/* Headline */}
+        <h2 className="mt-1.5 text-[30px] font-black leading-[1.12] tracking-[-0.03em] text-white">
+          {slide.title.replace(slide.highlightWord, "")}
+          <span className="text-[#ff3347]">
+            {slide.highlightWord}
+          </span>
+        </h2>
 
-          <p className="mt-3 text-[14px] leading-relaxed text-slate-600 max-w-[340px]">
-            {slide.text}
-          </p>
-        </div>
+        {/* Description */}
+        <p className="mt-2.5 text-[13.5px] leading-relaxed text-slate-300 max-w-[340px]">
+          {slide.text}
+        </p>
 
         {/* Bottom Navigation Indicators & Next Button */}
-        <div className="flex items-center justify-between pt-6">
+        <div className="flex items-center justify-between pt-7">
           {/* Progress Indicators */}
           <div className="flex gap-2">
             {ONBOARDING_SLIDES.map((_, i) => (
@@ -104,8 +97,8 @@ export function OnboardingScreen({
                 onClick={() => setCurrentPage(i)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   i === currentPage
-                    ? "w-8 bg-[#f52538] shadow-xs"
-                    : "w-2 bg-slate-300 hover:bg-slate-400"
+                    ? "w-8 bg-[#ff3347] shadow-xs"
+                    : "w-2 bg-white/30 hover:bg-white/50"
                 }`}
                 aria-label={`Slide ${i + 1}`}
               />
@@ -115,7 +108,7 @@ export function OnboardingScreen({
           {/* Action Button */}
           <button
             onClick={handleNext}
-            className="flex h-12 items-center gap-2.5 rounded-2xl bg-[#f52538] px-6 text-xs font-black tracking-wider text-white shadow-md active:scale-95 transition hover:bg-[#ff3347]"
+            className="flex h-12 items-center gap-2.5 rounded-2xl bg-[#ff3347] px-6 text-xs font-black tracking-wider text-white shadow-lg shadow-red-950/50 active:scale-95 transition hover:bg-[#ff4d5e]"
           >
             <span>{currentPage === ONBOARDING_SLIDES.length - 1 ? "ENTER APP" : "NEXT"}</span>
             <ArrowRight className="h-4 w-4" />
