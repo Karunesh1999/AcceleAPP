@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { Search, ShoppingCart, X } from "lucide-react";
 import { PRODUCTS } from "@/data/mockData";
 import type { Product } from "@/types";
@@ -27,6 +27,44 @@ export function ProductsScreen({
     { id: "wiring", label: "Actuators & Relays" },
     { id: "gps", label: "GPS & Antennas" },
   ];
+
+  // Drag and smooth horizontal scrolling handlers
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftPos, setScrollLeftPos] = useState(0);
+  const [hasDragged, setHasDragged] = useState(false);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setHasDragged(false);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeftPos(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    if (Math.abs(walk) > 5) {
+      setHasDragged(true);
+    }
+    scrollRef.current.scrollLeft = scrollLeftPos - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setTimeout(() => setHasDragged(false), 60);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!scrollRef.current) return;
+    if (Math.abs(e.deltaY) > 0 || Math.abs(e.deltaX) > 0) {
+      scrollRef.current.scrollLeft += (e.deltaX || e.deltaY) * 0.9;
+    }
+  };
 
   const filtered = useMemo(() => {
     return PRODUCTS.filter((product) => {
@@ -80,13 +118,25 @@ export function ProductsScreen({
           )}
         </div>
 
-        {/* Filter Pills */}
-        <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+        {/* Filter Pills with Left/Right Scroll and Drag */}
+        <div
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onWheel={handleWheel}
+          className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1 cursor-grab active:cursor-grabbing select-none touch-pan-x -mx-4 px-4 scroll-smooth"
+        >
           {categoriesList.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`whitespace-nowrap rounded-full px-4 py-2 text-[10px] font-bold transition-all ${
+              onClick={() => {
+                if (!hasDragged) {
+                  setSelectedCategory(cat.id);
+                }
+              }}
+              className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-[10px] font-bold transition-all ${
                 selectedCategory === cat.id
                   ? "bg-[#f52538] text-white shadow-xs"
                   : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200 shadow-2xs"

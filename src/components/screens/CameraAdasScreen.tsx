@@ -47,7 +47,7 @@ export function CameraAdasScreen({
         </div>
 
         {/* Camera Selector Pills */}
-        <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar pb-1 touch-pan-x -mx-4 px-4">
           {[
             { id: "front", label: "Front Bumper Radar" },
             { id: "rear", label: "Rear Hitch (RVC180CTD)" },
@@ -56,7 +56,7 @@ export function CameraAdasScreen({
             <button
               key={c.id}
               onClick={() => setSelectedCam(c.id as typeof selectedCam)}
-              className={`px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              className={`shrink-0 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedCam === c.id
                   ? "bg-[#f52538] text-white shadow-2xs font-black"
                   : "bg-white text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs"
