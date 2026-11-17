@@ -8,7 +8,8 @@ import {
   Headphones, 
   ChevronRight, 
   ArrowRight,
-  Flame
+  Flame,
+  ShieldCheck
 } from "lucide-react";
 import acceleCar from "@/assets/accele-car.jpg";
 import rvcScene from "@/assets/rvc180-scene.png";
@@ -36,6 +37,7 @@ export function HomeScreen({
       case "Camera": return <Camera className="h-6 w-6" />;
       case "Zap": return <Zap className="h-6 w-6" />;
       case "Cpu": return <Cpu className="h-6 w-6" />;
+      case "ShieldCheck": return <ShieldCheck className="h-6 w-6" />;
       default: return <Radio className="h-6 w-6" />;
     }
   };

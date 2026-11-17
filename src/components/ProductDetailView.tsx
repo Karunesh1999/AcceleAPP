@@ -102,9 +102,9 @@ export function ProductDetailView({
 
           <Badge
             variant="default"
-            className="absolute left-3 top-3 text-[8px] tracking-wider font-black shadow-xs"
+            className="absolute left-3 top-3 text-[8px] tracking-wider font-black shadow-xs uppercase"
           >
-            LIVE HUD SIMULATION
+            {product.tag}
           </Badge>
 
           <Badge
@@ -120,13 +120,13 @@ export function ProductDetailView({
           <div className="rounded-xl bg-white border border-slate-200 p-3 text-center text-slate-800 shadow-2xs">
             <Radio className="h-5 w-5 mx-auto text-[#f52538]" />
             <p className="mt-1.5 text-[8px] font-black uppercase text-slate-700">
-              {product.fieldOfView}
+              {product.fieldOfView !== "N/A" ? product.fieldOfView : "12V PRO"}
             </p>
           </div>
           <div className="rounded-xl bg-white border border-slate-200 p-3 text-center text-slate-800 shadow-2xs">
             <Eye className="h-5 w-5 mx-auto text-sky-600" />
             <p className="mt-1.5 text-[8px] font-black uppercase text-slate-700">
-              160° LCD NTSC/AHD
+              {product.voltage}
             </p>
           </div>
           <div className="rounded-xl bg-white border border-slate-200 p-3 text-center text-slate-800 shadow-2xs">
@@ -141,7 +141,7 @@ export function ProductDetailView({
         <div className="flex rounded-xl bg-slate-200/80 p-1 border border-slate-200">
           {[
             { id: "overview", label: "Overview" },
-            { id: "simulator", label: "Live HUD" },
+            ...(product.category === "cameras" ? [{ id: "simulator", label: "Live HUD" }] : []),
             { id: "specs", label: "Specs" },
             { id: "wiring", label: "Wiring" },
           ].map((tab) => (
