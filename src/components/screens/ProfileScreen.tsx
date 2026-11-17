@@ -364,11 +364,8 @@ export function ProfileScreen({
           </button>
         </div>
 
-        {/* Footer info & Sign Out */}
-        <div className="text-center pt-2 space-y-2">
-          <p className="text-[10px] text-slate-400 font-mono">
-            Accele Bay App v2.4 • ISO 9001:2015 Certified
-          </p>
+        {/* Sign Out Button */}
+        <div className="text-center pt-2">
           <button
             onClick={onSignOut}
             className="text-xs font-bold text-slate-500 hover:text-slate-800 transition"
