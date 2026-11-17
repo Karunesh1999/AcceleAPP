@@ -1,0 +1,174 @@
+import * as React from "react";
+import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  description?: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function Modal({
+  isOpen,
+  onClose,
+  title,
+  description,
+  children,
+  className,
+}: ModalProps) {
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity animate-in fade-in"
+        onClick={onClose}
+      />
+
+      {/* Content */}
+      <div
+        className={cn(
+          "relative z-50 w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl transition-all animate-in zoom-in-95 text-slate-900",
+          className
+        )}
+      >
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        {title && (
+          <div className="mb-4">
+            <h3 className="text-lg font-black text-slate-900">{title}</h3>
+            {description && (
+              <p className="mt-1 text-xs text-slate-500">{description}</p>
+            )}
+          </div>
+        )}
+
+        {children}
+      </div>
+    </div>
+  );
+}
+
+interface SheetProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  subtitle?: string;
+  children: React.ReactNode;
+  position?: "bottom" | "right";
+  className?: string;
+}
+
+export function Sheet({
+  isOpen,
+  onClose,
+  title,
+  subtitle,
+  children,
+  position = "bottom",
+  className,
+}: SheetProps) {
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+        onClick={onClose}
+      />
+
+      {/* Panel */}
+      {position === "bottom" ? (
+        <div
+          className={cn(
+            "fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[92dvh] w-full max-w-[430px] flex-col rounded-t-[32px] border-t border-slate-200 bg-white text-slate-900 shadow-[0_-10px_30px_rgba(0,0,0,0.12)] animate-in slide-in-from-bottom duration-300",
+            className
+          )}
+        >
+          {/* Grab handle */}
+          <div className="flex justify-center pt-3 pb-1">
+            <div className="h-1.5 w-12 rounded-full bg-slate-300" />
+          </div>
+
+          <div className="flex items-center justify-between px-6 py-3 border-b border-slate-100">
+            <div>
+              {subtitle && (
+                <p className="text-[9px] font-extrabold tracking-widest text-[#f52538] uppercase">
+                  {subtitle}
+                </p>
+              )}
+              {title && <h3 className="text-base font-black text-slate-900">{title}</h3>}
+            </div>
+            <button
+              onClick={onClose}
+              className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-6 py-4 no-scrollbar">
+            {children}
+          </div>
+        </div>
+      ) : (
+        <div
+          className={cn(
+            "relative z-50 flex h-full w-full max-w-md flex-col border-l border-slate-200 bg-white text-slate-900 p-6 shadow-2xl animate-in slide-in-from-right duration-300",
+            className
+          )}
+        >
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+              {subtitle && (
+                <p className="text-[9px] font-extrabold tracking-widest text-[#f52538] uppercase">
+                  {subtitle}
+                </p>
+              )}
+              {title && <h3 className="text-base font-black text-slate-900">{title}</h3>}
+            </div>
+            <button
+              onClick={onClose}
+              className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto py-4 no-scrollbar">{children}</div>
+        </div>
+      )}
+    </div>
+  );
+}
