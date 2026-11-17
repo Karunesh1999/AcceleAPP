@@ -116,11 +116,6 @@ export function DesktopDeviceFrame({ children }: DesktopDeviceFrameProps) {
                   msOverflowStyle: "none",
                 }}
               />
-
-              {/* iOS Home Indicator Bar */}
-              <div className="absolute bottom-[6px] inset-x-0 flex justify-center pointer-events-none z-40">
-                <div className="w-32 h-[4px] bg-slate-900/40 rounded-full backdrop-blur-xs" />
-              </div>
             </div>
           </div>
         </div>

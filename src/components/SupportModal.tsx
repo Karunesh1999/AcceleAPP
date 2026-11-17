@@ -4,7 +4,7 @@ import {
   Send, 
   Bot, 
   FileCheck, 
-  ChevronRight
+  Mail
 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -21,11 +21,11 @@ export function SupportModal({
   onClose,
   soundEnabled,
 }: SupportModalProps) {
-  const [activeTab, setActiveTab] = useState<"chat" | "guides" | "rma">("chat");
+  const [activeTab, setActiveTab] = useState<"chat" | "rma">("chat");
   const [messages, setMessages] = useState<Array<{ sender: "tech" | "user"; text: string; time: string }>>([
     {
       sender: "tech",
-      text: "Accele Bay Support online. I can assist with RVC180CTD radar calibration, wire harness pinouts, or 12V reverse triggers. What are you installing today?",
+      text: "Accele Bay Support online. I can assist with RVC180FM radar calibration, wire harness pinouts, or 12V reverse triggers. What are you installing today?",
       time: "Just now"
     }
   ]);
@@ -64,7 +64,7 @@ export function SupportModal({
       } else if (lower.includes("guideline") || lower.includes("lines")) {
         reply = "To remove the parking guidelines, locate the small green loop wire on the camera pigtail. Snip the loop while power is disconnected, tape the ends, and cycle vehicle ignition.";
       } else if (lower.includes("radar") || lower.includes("calibrate")) {
-        reply = "The RVC180CTD Doppler radar is factory pre-calibrated. Ensure the camera face is perpendicular to the ground with a clear line of sight (no metal brackets blocking the plastic radar lens).";
+        reply = "The RVC180FM Doppler radar is factory pre-calibrated. Ensure the camera face is perpendicular to the ground with a clear line of sight (no metal brackets blocking the plastic radar lens).";
       }
 
       setMessages((prev) => [
@@ -94,7 +94,6 @@ export function SupportModal({
       <div className="flex rounded-xl bg-slate-100 p-1 border border-slate-200 mb-4">
         {[
           { id: "chat", label: "Live Tech Chat" },
-          { id: "guides", label: "Quick Pinouts" },
           { id: "rma", label: "Warranty / RMA" },
         ].map((t) => (
           <button
@@ -188,28 +187,6 @@ export function SupportModal({
         </div>
       )}
 
-      {activeTab === "guides" && (
-        <div className="space-y-2.5 text-xs">
-          {[
-            { title: "RVC180CTD Universal Wire Diagram", rev: "PDF 1.4 MB", type: "Schematic" },
-            { title: "Ford F-150 / SuperDuty Tailgate Fitment", rev: "PDF 820 KB", type: "Fit Guide" },
-            { title: "RAM 1500–3500 Handle Mount Pinout", rev: "PDF 950 KB", type: "OEM Integration" },
-            { title: "LED8 App RGB Controller Pairing Manual", rev: "PDF 600 KB", type: "User Guide" },
-          ].map((g, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 transition cursor-pointer"
-            >
-              <div>
-                <p className="font-bold text-slate-900 text-xs">{g.title}</p>
-                <p className="text-[10px] text-slate-500 mt-0.5">{g.type} • {g.rev}</p>
-              </div>
-              <ChevronRight className="h-4 w-4 text-slate-400" />
-            </div>
-          ))}
-        </div>
-      )}
-
       {activeTab === "rma" && (
         <div className="space-y-3 text-xs">
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
@@ -227,17 +204,27 @@ export function SupportModal({
         </div>
       )}
 
-      {/* Direct Phone Dial Footer */}
-      <div className="mt-4 pt-3 border-t border-slate-200">
+      {/* Direct Phone & Email Dial Footer */}
+      <div className="mt-4 pt-3 border-t border-slate-200 space-y-2">
         <a
-          href="tel:18009888089"
+          href="tel:18007881212,170"
           className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition border border-slate-200 text-xs font-bold text-slate-900"
         >
           <div className="flex items-center gap-3 text-emerald-600">
             <PhoneCall className="h-4 w-4" />
-            <span className="text-slate-900">Call Bay Tech Desk: 1-800-988-8089</span>
+            <span className="text-slate-900">Call Bay Tech Desk: (800) 788-1212 Ext. 170</span>
           </div>
           <span className="text-[10px] text-sky-700 uppercase font-mono font-bold">Toll-Free</span>
+        </a>
+        <a
+          href="mailto:Techsupport@accele.com"
+          className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition border border-slate-200 text-[11px] font-semibold text-slate-700"
+        >
+          <div className="flex items-center gap-2.5 text-sky-600">
+            <Mail className="h-4 w-4" />
+            <span>Techsupport@accele.com</span>
+          </div>
+          <span className="text-[10px] text-slate-500">Cerritos, CA</span>
         </a>
       </div>
     </Modal>

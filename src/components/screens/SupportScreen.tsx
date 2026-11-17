@@ -123,12 +123,12 @@ export function SupportScreen({
         </p>
 
         <a
-          href="tel:18009888089"
+          href="tel:18007881212,170"
           className="mt-3 flex items-center justify-between rounded-xl bg-slate-50 border border-slate-200 p-4 text-xs font-bold transition hover:bg-slate-100"
         >
           <span className="flex items-center gap-3 text-rose-600">
             <PhoneCall className="h-5 w-5" />
-            <span className="text-slate-900 font-mono text-sm">1-800-988-8089</span>
+            <span className="text-slate-900 font-mono text-sm">(800) 788-1212 Ext. 170</span>
           </span>
           <ChevronRight className="h-4 w-4 text-slate-400" />
         </a>
