@@ -47,7 +47,10 @@ export function HomeScreen({
   onOpenSupport,
   soundEnabled,
 }: HomeScreenProps) {
-  const flagshipProduct = PRODUCTS[0];
+  const flagshipProduct = 
+    PRODUCTS.find((p) => p.sku.toLowerCase().includes("rvc180")) || 
+    PRODUCTS.find((p) => p.category === "cameras") || 
+    PRODUCTS[0];
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
