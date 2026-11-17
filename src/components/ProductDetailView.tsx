@@ -285,7 +285,7 @@ export function ProductDetailView({
       <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-[430px] items-center gap-3 border-t border-slate-200 bg-white/95 p-4 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
         <div className="mr-auto">
           <div className="flex items-baseline gap-1">
-            <span className="text-xl font-black text-slate-900">
+            <span className="text-xl font-black text-[#f52538]">
               ${product.price.toFixed(2)}
             </span>
             {product.originalPrice && (

@@ -125,7 +125,7 @@ export function Sheet({
           <div className="flex items-center justify-between px-6 py-3 border-b border-slate-100">
             <div>
               {subtitle && (
-                <p className="text-[9px] font-extrabold tracking-widest text-[#f52538] uppercase">
+                <p className="text-[9px] font-bold tracking-widest text-[#f52538] uppercase">
                   {subtitle}
                 </p>
               )}
@@ -153,7 +153,7 @@ export function Sheet({
           <div className="flex items-center justify-between pb-4 border-b border-slate-100">
             <div>
               {subtitle && (
-                <p className="text-[9px] font-extrabold tracking-widest text-[#f52538] uppercase">
+                <p className="text-[9px] font-bold tracking-widest text-[#f52538] uppercase">
                   {subtitle}
                 </p>
               )}

@@ -49,7 +49,7 @@ export function OnboardingScreen({
       <div className="relative z-20 flex items-center justify-end px-6 pt-6">
         <button
           onClick={onComplete}
-          className="rounded-full border border-white/20 bg-black/40 px-4 py-1.5 text-[11px] font-extrabold tracking-wider text-white backdrop-blur-md hover:bg-black/60 transition active:scale-95 shadow-sm"
+          className="rounded-full border border-white/20 bg-black/40 px-4 py-1.5 text-[11px] font-bold tracking-wider text-white backdrop-blur-md hover:bg-black/60 transition active:scale-95 shadow-sm"
         >
           SKIP
         </button>

@@ -101,7 +101,7 @@ export function CartSheet({
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-slate-500">Total Billed:</span>
-              <span className="font-extrabold text-slate-900">${total.toFixed(2)}</span>
+              <span className="font-bold text-slate-900">${total.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-slate-500">Dispatch Window:</span>

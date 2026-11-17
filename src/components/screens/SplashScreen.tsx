@@ -48,7 +48,7 @@ export function SplashScreen({ onComplete, soundEnabled }: SplashScreenProps) {
       </div>
 
       {/* Bottom Status Indicator */}
-      <div className="absolute bottom-12 flex items-center gap-2.5 text-[10px] font-extrabold tracking-widest text-slate-500">
+      <div className="absolute bottom-12 flex items-center gap-2.5 text-[10px] font-bold tracking-widest text-slate-500">
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-sm" />

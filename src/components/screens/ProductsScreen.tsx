@@ -202,7 +202,7 @@ export function ProductsScreen({
 
                 <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-slate-100">
                   <div>
-                    <strong className="text-sm font-bold text-slate-900">
+                    <strong className="text-[15px] font-bold text-[#f52538]">
                       ${product.price.toFixed(2)}
                     </strong>
                     <p className="text-[7px] font-semibold text-slate-500">TIER 1 DEALER</p>
@@ -211,7 +211,7 @@ export function ProductsScreen({
                   <button
                     onClick={(e) => handleQuickAdd(e, product)}
                     aria-label={`Add ${product.name} to cart`}
-                    className="grid h-8 w-8 place-items-center rounded-lg bg-slate-100 text-slate-700 hover:bg-[#f52538] hover:text-white transition active:scale-90 border border-slate-200"
+                    className="grid h-8 w-8 place-items-center rounded-lg bg-slate-100/70 text-slate-500/80 hover:bg-slate-200/70 hover:text-slate-700 transition active:scale-90 border border-slate-200/80 shadow-2xs"
                   >
                     <ShoppingCart className="h-4 w-4" />
                   </button>
