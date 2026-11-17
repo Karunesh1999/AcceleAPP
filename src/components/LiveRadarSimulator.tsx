@@ -4,8 +4,7 @@ import {
   CheckCircle2, 
   RotateCcw, 
   Eye, 
-  Layers,
-  Sparkles
+  Layers
 } from "lucide-react";
 import rvcScene from "@/assets/rvc180-scene.png";
 import { playAlertBeep } from "@/lib/utils";
@@ -55,29 +54,14 @@ export function LiveRadarSimulator({
             <span className="absolute inset-0 h-2 w-2 rounded-full bg-emerald-500 animate-ping opacity-75" />
           </div>
           <div>
-            <h4 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-              <span>LIVE ADAS HUD SIMULATOR</span>
-              <span className="rounded bg-sky-50 border border-sky-200 px-1.5 py-0.5 text-[8px] font-bold text-sky-700">
-                180° RADAR
-              </span>
+            <h4 className="text-xs font-black text-slate-900">
+              LIVE ADAS HUD SIMULATOR
             </h4>
             <p className="text-[9px] text-slate-500">
               Interactive Doppler cross-traffic recognition
             </p>
           </div>
         </div>
-
-        <button
-          onClick={() => setAutoSimulate(!autoSimulate)}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black transition-colors ${
-            autoSimulate 
-              ? "bg-[#f52538] text-white shadow-2xs" 
-              : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
-          }`}
-        >
-          <Sparkles className="w-3 h-3" />
-          {autoSimulate ? "AUTO ON" : "DEMO CYCLE"}
-        </button>
       </div>
 
       {/* Main Visual Display Area (Vehicle Camera Monitor Feed) */}
