@@ -293,7 +293,7 @@ export function HomeScreen({
               <span>180° ACTIVE RADAR COVERAGE</span>
             </div>
 
-            <h3 className="mt-1.5 text-xl font-black leading-tight text-slate-900">
+            <h3 className="mt-1.5 text-xl font-bold leading-tight text-slate-900">
               Moving Object Recognition Camera
             </h3>
 
