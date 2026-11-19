@@ -22,6 +22,7 @@ import {
   Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { InstallationManualModal } from "@/components/InstallationManualModal";
 import { playAlertBeep } from "@/lib/utils";
 
 interface ProfileScreenProps {
@@ -45,7 +46,7 @@ export function ProfileScreen({
   onToggleSound,
   onSignOut,
 }: ProfileScreenProps) {
-  const [modalType, setModalType] = useState<"about" | "faq" | "privacy" | "terms" | "edit" | null>(null);
+  const [modalType, setModalType] = useState<"about" | "faq" | "privacy" | "terms" | "edit" | "manuals" | null>(null);
   const [dealerName, setDealerName] = useState("Marcus Vance");
   const [dealerCompany, setDealerCompany] = useState("Apex 12V Autoworks");
   const [dealerEmail, setDealerEmail] = useState("marcus.vance@apex12v.com");
@@ -204,7 +205,7 @@ export function ProfileScreen({
             {/* Name and email */}
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-bold text-slate-900 truncate">
-                {dealerName} • {dealerCompany}
+                {dealerName}
               </h2>
               <p className="text-xs text-slate-500 truncate mt-0.5 font-normal">
                 {dealerEmail}
@@ -273,6 +274,32 @@ export function ProfileScreen({
                 </span>
                 <p className="text-[11px] text-slate-500 mt-0.5">
                   Call, live chat, or email us
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-slate-400 shrink-0 ml-2" />
+          </button>
+
+          {/* 3. Installation & Wiring Manuals */}
+          <button
+            onClick={() => setModalType("manuals")}
+            className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition text-left"
+          >
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="h-11 w-11 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-700 shrink-0">
+                <FileText className="h-5 w-5 stroke-[1.75]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-900">
+                    Installation & Wiring Manuals
+                  </span>
+                  <span className="bg-sky-50 text-sky-700 border border-sky-200 text-[9.5px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    5 GUIDES
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Pinouts, wire color codes & PDF bay sheets
                 </p>
               </div>
             </div>
@@ -636,6 +663,17 @@ export function ProfileScreen({
           </div>
         </div>
       )}
+
+      {/* Installation & Wiring Manuals Hub */}
+      <InstallationManualModal
+        isOpen={modalType === "manuals"}
+        onClose={() => setModalType(null)}
+        initialCategory="cameras"
+        onContactSupport={() => {
+          setModalType(null);
+          onOpenLiveChat();
+        }}
+      />
     </div>
   );
 }

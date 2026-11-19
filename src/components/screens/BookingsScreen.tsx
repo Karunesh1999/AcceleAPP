@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/Button";
 import { PRODUCTS } from "@/data/mockData";
 import type { Product } from "@/types";
 import { playAlertBeep } from "@/lib/utils";
+import { generateInvoicePdf } from "@/lib/pdfGenerator";
 
 export interface OrderItem {
   product: Product;
@@ -648,8 +649,8 @@ export function BookingsScreen({
 
             <Button
               onClick={() => {
-                showToast("Invoice PDF downloaded to device!");
-                setInvoiceModalOrder(null);
+                generateInvoicePdf(invoiceModalOrder);
+                showToast(`Downloaded Accele_Invoice_${invoiceModalOrder.id}.pdf`);
               }}
               variant="default"
               size="sm"

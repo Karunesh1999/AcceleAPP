@@ -7,8 +7,6 @@ import {
   Eye, 
   Check, 
   ShoppingCart, 
-  FileText, 
-  AlertCircle,
   Share2
 } from "lucide-react";
 import type { Product } from "@/types";
@@ -24,95 +22,6 @@ interface ProductDetailViewProps {
   soundEnabled: boolean;
   onOpenSupport: () => void;
 }
-
-interface WiringPin {
-  label: string;
-  desc: string;
-  colorClass: string;
-}
-
-interface CategoryWiringData {
-  title: string;
-  subtitle: string;
-  badgeText: string;
-  badgeVariant: "cyan" | "emerald" | "amber" | "default";
-  pins: WiringPin[];
-  note: string;
-  buttonLabel: string;
-}
-
-const CATEGORY_WIRING_DATA: Record<string, CategoryWiringData> = {
-  cameras: {
-    title: "4-Pin Mini DIN Pinout",
-    subtitle: "Standard Accele Pro Video Bus",
-    badgeText: "BAY VERIFIED",
-    badgeVariant: "cyan",
-    pins: [
-      { label: "PIN 1 (Red):", desc: "+12V Reverse Lamp Trigger", colorClass: "text-rose-600 font-bold" },
-      { label: "PIN 2 (Black):", desc: "Chassis Ground", colorClass: "text-slate-600 font-bold" },
-      { label: "PIN 3 (Yellow):", desc: "Video Positive (CVBS / AHD)", colorClass: "text-amber-600 font-bold" },
-      { label: "PIN 4 (White):", desc: "Audio Buzzer Output", colorClass: "text-sky-600 font-bold" },
-    ],
-    note: "Loop cut wire (Green): Cut loop to disable dynamic parking guideline overlay. Loop cut wire (White): Cut to switch from Mirror/Reverse to Normal/Front view.",
-    buttonLabel: "Download Full PDF Bay Guide",
-  },
-  wiring: {
-    title: "SPDT Switch & Actuator Terminal Pinout",
-    subtitle: "Standard Accele Industrial 12V/24V Bay Pinout",
-    badgeText: "SAE VERIFIED",
-    badgeVariant: "emerald",
-    pins: [
-      { label: "COM (Pin 30):", desc: "Common 12V DC Supply / Power Tap", colorClass: "text-slate-700 font-bold" },
-      { label: "NC (Pin 87a):", desc: "Normally Closed (Resting circuit contact)", colorClass: "text-sky-600 font-bold" },
-      { label: "NO (Pin 87):", desc: "Normally Open (+12V output on trigger)", colorClass: "text-rose-600 font-bold" },
-      { label: "Motor Leads:", desc: "2-Wire Polarity Reversing Motor Actuator", colorClass: "text-amber-600 font-bold" },
-    ],
-    note: "Polarity Reversal: For central door-locking actuators, ensure inline 15A fuse is installed before tying into factory BCM harness.",
-    buttonLabel: "Download Relay & Actuator Schematic PDF",
-  },
-  security: {
-    title: "Primary Vehicle Security Harness",
-    subtitle: "Multi-Zone Telematics & Starter Kill Harness",
-    badgeText: "PRO BAY VERIFIED",
-    badgeVariant: "cyan",
-    pins: [
-      { label: "PIN 1 (Red - 12 AWG):", desc: "+12V Constant Battery Tap (Fused 30A)", colorClass: "text-rose-600 font-bold" },
-      { label: "PIN 2 (Black):", desc: "Direct Chassis Ground (Clean bare metal)", colorClass: "text-slate-700 font-bold" },
-      { label: "PIN 3 (Yellow):", desc: "Ignition 1 Switched (+12V Run & Crank)", colorClass: "text-amber-600 font-bold" },
-      { label: "PIN 4 (Brown):", desc: "Siren (+) Positive Output (2A Max Drive)", colorClass: "text-sky-600 font-bold" },
-      { label: "PIN 5 (Violet/Green):", desc: "(+ / -) Door Pin Sense Triggers", colorClass: "text-emerald-600 font-bold" },
-    ],
-    note: "Tachometer Sensing: Program tachometer sense or tachless voltage monitor before initiating remote starter sequence to prevent starter grind.",
-    buttonLabel: "Download Security & Remote Start Guide PDF",
-  },
-  lighting: {
-    title: "12V DC Low-Voltage Lighting Harness",
-    subtitle: "Direct Bay Power & Courtesy Dimmer Wiring",
-    badgeText: "DOT COMPLIANT",
-    badgeVariant: "amber",
-    pins: [
-      { label: "Wire 1 (Red / +):", desc: "+12V Switched Power / Interior Dome Tap", colorClass: "text-rose-600 font-bold" },
-      { label: "Wire 2 (Black / -):", desc: "Chassis Ground (-)", colorClass: "text-slate-700 font-bold" },
-      { label: "Wire 3 (Yellow / PWM):", desc: "Optional Courtesy Dimmer / Door Trigger", colorClass: "text-amber-600 font-bold" },
-    ],
-    note: "Reverse Polarity Protection: Integrated diode prevents board damage in case of inverted leads. Tap into fused 5A-10A auxiliary interior circuit.",
-    buttonLabel: "Download Lighting Installation Sheet PDF",
-  },
-  gps: {
-    title: "Dash Port & Pass-Through Harness",
-    subtitle: "High-Speed Audio/Video & Fast-Charge Interface",
-    badgeText: "OEM COMPLIANT",
-    badgeVariant: "emerald",
-    pins: [
-      { label: "Power Lead (Red):", desc: "+12V ACC Accessory Circuit (Fused 5A)", colorClass: "text-rose-600 font-bold" },
-      { label: "Ground Lead (Black):", desc: "Negative Chassis Ground Tap (-)", colorClass: "text-slate-700 font-bold" },
-      { label: "Port 1 (USB-C/USB-A):", desc: "45W Fast Charging & Data Pass-Through", colorClass: "text-sky-600 font-bold" },
-      { label: "Port 2 (HDMI/3.5mm):", desc: "Direct A/V Feed to Head Unit / Display", colorClass: "text-amber-600 font-bold" },
-    ],
-    note: "Plug & Play Installation: Direct flush-mount into standard OEM rocker switch cutouts or auxiliary 12V cigarette lighter sockets.",
-    buttonLabel: "Download Port Specs & Harness Guide PDF",
-  },
-};
 
 const getCategoryHeader = (cat: string) => {
   switch (cat) {
@@ -173,7 +82,6 @@ export function ProductDetailView({
   soundEnabled,
   onOpenSupport,
 }: ProductDetailViewProps) {
-  const hasWiringGuide = product.category === "cameras" || product.category === "security";
   const [activeTab, setActiveTab] = useState<"overview" | "specs">("overview");
   const [addedToast, setAddedToast] = useState(false);
   const [shareToast, setShareToast] = useState(false);
@@ -387,47 +295,6 @@ export function ProductDetailView({
                 ))}
               </div>
             </div>
-
-            {/* Vehicle Wiring & Harness Guide */}
-            {hasWiringGuide && (() => {
-              const wiringData = CATEGORY_WIRING_DATA[product.category] || CATEGORY_WIRING_DATA.cameras;
-              return (
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-900">{wiringData.title}</h4>
-                      <p className="text-xs text-slate-500 font-normal">{wiringData.subtitle}</p>
-                    </div>
-                    <Badge variant={wiringData.badgeVariant}>{wiringData.badgeText}</Badge>
-                  </div>
-
-                  <div className="p-3 bg-slate-50 rounded-xl font-mono text-[11px] space-y-1.5 border border-slate-200 text-slate-800">
-                    {wiringData.pins.map((pin, i) => (
-                      <div key={i} className="flex justify-between items-center gap-2">
-                        <span className={`${pin.colorClass} shrink-0`}>{pin.label}</span>
-                        <span className="text-right text-[10.5px] text-slate-700">{pin.desc}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-start gap-2 p-3 bg-amber-50/60 rounded-xl text-xs text-amber-900 border border-amber-200">
-                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                    <span className="text-[11px] leading-relaxed">
-                      {wiringData.note}
-                    </span>
-                  </div>
-
-                  <Button
-                    onClick={onOpenSupport}
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-xs font-bold"
-                  >
-                    <FileText className="w-3.5 h-3.5 mr-2 text-[#f52538]" /> {wiringData.buttonLabel}
-                  </Button>
-                </div>
-              );
-            })()}
           </div>
         )}
       </div>
