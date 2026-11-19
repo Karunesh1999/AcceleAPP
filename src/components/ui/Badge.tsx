@@ -13,7 +13,7 @@ export function Badge({
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-md px-2 py-0.5 text-[8px] font-black uppercase tracking-wider transition-colors",
+        "inline-flex items-center rounded-md px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider transition-colors",
         {
           "bg-[#f52538] text-white shadow-sm": variant === "default",
           "bg-slate-100 text-slate-700 border border-slate-200": variant === "secondary",

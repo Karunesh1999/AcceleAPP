@@ -89,10 +89,10 @@ export function LiveRadarSimulator({
             {/* Target Bounding Box and Warning Overlay */}
             {activeZone === "left" && (
               <div className="absolute left-6 top-16 w-32 h-24 border-2 border-red-500/80 rounded bg-red-500/15 animate-pulse flex flex-col justify-between p-1.5">
-                <span className="text-[8px] font-bold bg-red-600/85 text-white px-1.5 py-0.5 self-start rounded shadow-xs backdrop-blur-xs">
+                <span className="text-[9px] font-mono font-bold bg-red-600/85 text-white px-1.5 py-0.5 self-start rounded shadow-xs backdrop-blur-xs">
                   VEHICLE: 14 MPH
                 </span>
-                <span className="text-[8px] font-mono font-medium text-red-200">
+                <span className="text-[9px] font-mono font-semibold text-red-200">
                   DIST: 7.8 FT ◀
                 </span>
               </div>
@@ -100,10 +100,10 @@ export function LiveRadarSimulator({
 
             {activeZone === "right" && (
               <div className="absolute right-6 top-16 w-32 h-24 border-2 border-red-500/80 rounded bg-red-500/15 animate-pulse flex flex-col justify-between p-1.5">
-                <span className="text-[8px] font-bold bg-red-600/85 text-white px-1.5 py-0.5 self-end rounded shadow-xs backdrop-blur-xs">
+                <span className="text-[9px] font-mono font-bold bg-red-600/85 text-white px-1.5 py-0.5 self-end rounded shadow-xs backdrop-blur-xs">
                   TRUCK: 12 MPH
                 </span>
-                <span className="text-[8px] font-mono font-medium text-red-200 text-right">
+                <span className="text-[9px] font-mono font-semibold text-red-200 text-right">
                   ▶ DIST: 9.4 FT
                 </span>
               </div>
@@ -123,20 +123,20 @@ export function LiveRadarSimulator({
               {activeZone !== "clear" ? (
                 <div className="flex items-center gap-2 rounded-lg bg-red-600/85 backdrop-blur-sm border border-red-400/30 px-3 py-1.5 text-white shadow-md animate-bounce">
                   <ShieldAlert className="w-4 h-4 text-white" />
-                  <span className="text-[10px] font-bold tracking-wide">
+                  <span className="text-xs font-bold tracking-wide">
                     {activeZone === "left" ? "CROSS TRAFFIC FROM LEFT" : "CROSS TRAFFIC FROM RIGHT"}
                   </span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 rounded-lg bg-emerald-600/85 backdrop-blur-sm border border-emerald-400/30 px-3 py-1.5 text-white shadow-md">
                   <CheckCircle2 className="w-4 h-4 text-white" />
-                  <span className="text-[10px] font-bold tracking-wide">
+                  <span className="text-xs font-bold tracking-wide">
                     PATH CLEAR AHEAD
                   </span>
                 </div>
               )}
 
-              <span className="text-[8px] font-mono text-slate-300 bg-black/60 px-2 py-0.5 rounded backdrop-blur">
+              <span className="text-[9.5px] font-mono font-medium text-slate-300 bg-black/60 px-2 py-0.5 rounded backdrop-blur">
                 24.125 GHz RADAR
               </span>
             </div>
@@ -165,7 +165,7 @@ export function LiveRadarSimulator({
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setGuidelinesVisible(!guidelinesVisible)}
-              className={`flex items-center gap-1 ${guidelinesVisible ? "text-sky-700 font-black" : "text-slate-400"}`}
+              className={`flex items-center gap-1 ${guidelinesVisible ? "text-sky-700 font-bold" : "text-slate-400"}`}
               title="Toggle parking guidelines"
             >
               <Layers className="w-3 h-3" />
@@ -173,7 +173,7 @@ export function LiveRadarSimulator({
             </button>
             <button
               onClick={() => setHudActive(!hudActive)}
-              className={`flex items-center gap-1 ${hudActive ? "text-sky-700 font-black" : "text-slate-400"}`}
+              className={`flex items-center gap-1 ${hudActive ? "text-sky-700 font-bold" : "text-slate-400"}`}
               title="Toggle HUD bounding boxes"
             >
               <Eye className="w-3 h-3" />
@@ -181,7 +181,7 @@ export function LiveRadarSimulator({
             </button>
             <button
               onClick={() => setCameraMount(cameraMount === "front" ? "rear" : "front")}
-              className="flex items-center gap-1 text-slate-600 hover:text-slate-900"
+              className="flex items-center gap-1 text-slate-600 hover:text-slate-900 font-bold"
             >
               <RotateCcw className="w-3 h-3" />
               <span>{cameraMount === "front" ? "Front" : "Rear"}</span>
@@ -203,8 +203,8 @@ export function LiveRadarSimulator({
               <ArrowLeft className="w-3 h-3" />
               <Car className="w-3.5 h-3.5" />
             </div>
-            <span className="text-[9px] font-bold leading-tight">LEFT TRAFFIC</span>
-            <span className="text-[7px] text-rose-600 font-bold mt-0.5">Alert</span>
+            <span className="text-[10px] font-bold leading-tight">LEFT TRAFFIC</span>
+            <span className="text-[9px] text-rose-600 font-bold mt-0.5">Alert</span>
           </button>
 
           <button
@@ -218,8 +218,8 @@ export function LiveRadarSimulator({
             <div className="flex items-center gap-1 text-emerald-600 mb-0.5">
               <CheckCircle2 className="w-3.5 h-3.5" />
             </div>
-            <span className="text-[9px] font-bold leading-tight">CLEAR AHEAD</span>
-            <span className="text-[7px] text-emerald-600 font-bold mt-0.5">Safe</span>
+            <span className="text-[10px] font-bold leading-tight">CLEAR AHEAD</span>
+            <span className="text-[9px] text-emerald-600 font-bold mt-0.5">Safe</span>
           </button>
 
           <button
@@ -234,15 +234,15 @@ export function LiveRadarSimulator({
               <Truck className="w-3.5 h-3.5" />
               <ArrowRight className="w-3 h-3" />
             </div>
-            <span className="text-[9px] font-bold leading-tight">RIGHT TRAFFIC</span>
-            <span className="text-[7px] text-rose-600 font-bold mt-0.5">Alert</span>
+            <span className="text-[10px] font-bold leading-tight">RIGHT TRAFFIC</span>
+            <span className="text-[9px] text-rose-600 font-bold mt-0.5">Alert</span>
           </button>
         </div>
 
         {onExploreProduct && (
           <button
             onClick={onExploreProduct}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#f52538] text-white text-[11px] font-black tracking-wide shadow-sm hover:bg-[#ff3347] active:scale-98 transition"
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#f52538] text-white text-xs font-bold tracking-wide shadow-sm hover:bg-[#ff3347] active:scale-98 transition"
           >
             <span>VIEW RVC180CTD HARDWARE SPECS</span>
             <span>→</span>

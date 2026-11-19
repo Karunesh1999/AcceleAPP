@@ -36,13 +36,13 @@ export function DealerProfileModal({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h4 className="text-sm font-black text-slate-900 truncate">Apex 12V Autoworks</h4>
+              <h4 className="text-sm font-bold text-slate-900 truncate">Apex 12V Autoworks</h4>
               <Badge variant="cyan">TIER 1</Badge>
             </div>
-            <p className="text-[11px] text-slate-600 flex items-center gap-1 mt-0.5">
+            <p className="text-xs text-slate-600 flex items-center gap-1 mt-0.5">
               <MapPin className="h-3 w-3 text-sky-600" /> Phoenix, Arizona Bay
             </p>
-            <p className="text-[9px] font-mono text-slate-500 mt-1">
+            <p className="text-[10px] font-mono text-slate-500 mt-1 font-medium">
               ACCOUNT: ACC-8910-US • NET 30 ACTIVE
             </p>
           </div>
@@ -51,21 +51,21 @@ export function DealerProfileModal({
         {/* Tier Benefits Grid */}
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center gap-1.5 text-amber-700 font-black text-[10px]">
+            <div className="flex items-center gap-1.5 text-amber-700 font-bold text-[10px] tracking-wide">
               <Award className="h-3.5 w-3.5" />
               <span>WHOLESALE PRICING</span>
             </div>
-            <p className="text-base font-black text-slate-900 mt-1">10% Off MSRP</p>
-            <p className="text-[9px] text-slate-500 mt-0.5">Automated cart discounts</p>
+            <p className="text-base font-bold tracking-tight text-slate-900 mt-1">10% Off MSRP</p>
+            <p className="text-[10px] text-slate-500 mt-0.5">Automated cart discounts</p>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center gap-1.5 text-sky-700 font-black text-[10px]">
+            <div className="flex items-center gap-1.5 text-sky-700 font-bold text-[10px] tracking-wide">
               <ShieldCheck className="h-3.5 w-3.5" />
               <span>ADVANCE RMA</span>
             </div>
-            <p className="text-base font-black text-slate-900 mt-1">Instant Swap</p>
-            <p className="text-[9px] text-slate-500 mt-0.5">Pre-shipped warranty units</p>
+            <p className="text-base font-bold tracking-tight text-slate-900 mt-1">Instant Swap</p>
+            <p className="text-[10px] text-slate-500 mt-0.5">Pre-shipped warranty units</p>
           </div>
         </div>
 

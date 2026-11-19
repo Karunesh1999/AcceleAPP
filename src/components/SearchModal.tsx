@@ -56,13 +56,13 @@ export function SearchModal({
         </div>
 
         {/* Quick Suggestions */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
-          <span className="text-slate-500 font-bold">Trending:</span>
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
+          <span className="text-slate-500 font-semibold">Trending:</span>
           {["RVC180CTD", "CAM90", "LED8", "Actuators"].map((tag) => (
             <button
               key={tag}
               onClick={() => setSearchTerm(tag)}
-              className="rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-700 hover:bg-slate-200 border border-slate-200"
+              className="rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-700 hover:bg-slate-200 border border-slate-200 font-medium text-[11px]"
             >
               {tag}
             </button>
@@ -88,13 +88,13 @@ export function SearchModal({
                   className="h-10 w-10 rounded-lg object-contain bg-white p-1 border border-slate-200"
                 />
                 <div className="flex-1 min-w-0">
-                  <span className="text-[8px] font-mono font-bold text-sky-700">
+                  <span className="text-[9.5px] font-mono font-semibold text-sky-700">
                     {item.sku}
                   </span>
                   <h4 className="text-xs font-bold text-slate-900 truncate">
                     {item.name}
                   </h4>
-                  <span className="text-xs font-black text-slate-900">
+                  <span className="text-xs font-bold text-slate-900">
                     ${item.price.toFixed(2)}
                   </span>
                 </div>

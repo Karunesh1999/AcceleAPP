@@ -33,10 +33,10 @@ export function CameraAdasScreen({
       <div className="px-4 pt-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[8px] font-black tracking-[0.2em] text-[#f52538] uppercase">
+            <p className="text-[10px] font-bold tracking-wider text-[#f52538] uppercase">
               PRO TELEMETRY & ADAS RADAR
             </p>
-            <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
               Live Sensor Cockpit
             </h1>
           </div>
@@ -58,7 +58,7 @@ export function CameraAdasScreen({
               onClick={() => setSelectedCam(c.id as typeof selectedCam)}
               className={`shrink-0 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedCam === c.id
-                  ? "bg-[#f52538] text-white shadow-2xs font-black"
+                  ? "bg-[#f52538] text-white shadow-2xs"
                   : "bg-white text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs"
               }`}
             >
@@ -80,7 +80,7 @@ export function CameraAdasScreen({
       <div className="px-4 pt-5 space-y-4">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 shadow-sm">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
               <Sliders className="w-3.5 h-3.5 text-[#f52538]" />
               <span>Radar Vector Configuration</span>
             </h3>

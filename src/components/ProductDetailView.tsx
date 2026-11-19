@@ -14,7 +14,6 @@ import {
 import type { Product } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { LiveRadarSimulator } from "@/components/LiveRadarSimulator";
 import { playAlertBeep } from "@/lib/utils";
 
 interface ProductDetailViewProps {
@@ -252,10 +251,10 @@ export function ProductDetailView({
         </button>
 
         <div className="text-center">
-          <p className="text-[8px] font-black tracking-[0.2em] text-[#f52538] uppercase">
+          <p className="text-[10px] font-bold tracking-wider text-[#f52538] uppercase">
             {getCategoryHeader(product.category)}
           </p>
-          <p className="text-[12px] font-bold text-slate-900">Product details</p>
+          <p className="text-xs font-bold text-slate-900">Product details</p>
         </div>
 
         <button
@@ -279,7 +278,7 @@ export function ProductDetailView({
       <div className="p-4 space-y-5">
         {/* Top Meta info */}
         <div>
-          <div className="flex items-center justify-between text-[9px] font-bold">
+          <div className="flex items-center justify-between text-[10px] font-bold">
             <span className="text-sky-700 font-mono tracking-wider">
               MODEL: {product.sku}
             </span>
@@ -290,7 +289,7 @@ export function ProductDetailView({
             </div>
           </div>
 
-          <h1 className="mt-1.5 text-2xl font-black leading-tight text-slate-900">
+          <h1 className="mt-1.5 text-2xl font-bold tracking-tight leading-tight text-slate-900">
             {product.name}
           </h1>
         </div>
@@ -305,14 +304,14 @@ export function ProductDetailView({
 
           <Badge
             variant="default"
-            className="absolute left-3 top-3 text-[8px] tracking-wider font-black shadow-xs uppercase"
+            className="absolute left-3 top-3 text-[9px] tracking-wider font-bold shadow-xs uppercase"
           >
             {product.tag}
           </Badge>
 
           <Badge
             variant="emerald"
-            className="absolute bottom-3 right-3 text-[8px] tracking-wider font-bold"
+            className="absolute bottom-3 right-3 text-[9px] tracking-wider font-bold"
           >
             FLEET TIER IN STOCK ({product.stockCount})
           </Badge>
@@ -322,19 +321,19 @@ export function ProductDetailView({
         <div className="grid grid-cols-3 gap-2">
           <div className="rounded-xl bg-white border border-slate-200 p-3 text-center text-slate-800 shadow-2xs">
             <Radio className="h-5 w-5 mx-auto text-[#f52538]" />
-            <p className="mt-1.5 text-[8px] font-black uppercase text-slate-700">
+            <p className="mt-1.5 text-[9px] font-bold uppercase text-slate-700 tracking-wider">
               {product.fieldOfView !== "N/A" ? product.fieldOfView : "12V PRO"}
             </p>
           </div>
           <div className="rounded-xl bg-white border border-slate-200 p-3 text-center text-slate-800 shadow-2xs">
             <Eye className="h-5 w-5 mx-auto text-sky-600" />
-            <p className="mt-1.5 text-[8px] font-black uppercase text-slate-700">
+            <p className="mt-1.5 text-[9px] font-bold uppercase text-slate-700 tracking-wider">
               {product.voltage}
             </p>
           </div>
           <div className="rounded-xl bg-white border border-slate-200 p-3 text-center text-slate-800 shadow-2xs">
             <ShieldCheck className="h-5 w-5 mx-auto text-emerald-600" />
-            <p className="mt-1.5 text-[8px] font-black uppercase text-slate-700">
+            <p className="mt-1.5 text-[9px] font-bold uppercase text-slate-700 tracking-wider">
               {product.environmentalRating}
             </p>
           </div>
@@ -351,7 +350,7 @@ export function ProductDetailView({
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
                 activeTab === tab.id
-                  ? "bg-white text-slate-900 shadow-xs font-black"
+                  ? "bg-white text-slate-900 shadow-xs font-bold"
                   : "text-slate-600 hover:text-slate-900 font-semibold"
               }`}
             >
@@ -366,20 +365,20 @@ export function ProductDetailView({
           return (
             <div className="space-y-4 animate-in fade-in">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
-                <p className="text-[8px] font-black uppercase tracking-widest text-[#f52538]">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#f52538]">
                   {overviewInfo.eyebrow}
                 </p>
-                <h2 className="mt-1.5 text-lg font-black text-slate-900">
+                <h2 className="mt-1.5 text-lg font-bold tracking-tight text-slate-900">
                   {overviewInfo.heading}
                 </h2>
-                <p className="mt-2 text-xs leading-relaxed text-slate-600">
+                <p className="mt-2 text-xs leading-relaxed text-slate-600 font-normal">
                   {product.description}
                 </p>
               </div>
 
               {/* Highlights List */}
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
-                <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3">
                   Key Engineering Highlights
                 </h3>
                 <div className="space-y-2.5">
@@ -393,13 +392,6 @@ export function ProductDetailView({
                   ))}
                 </div>
               </div>
-
-              {/* Live Radar Simulator for cameras */}
-              {product.category === "cameras" && (
-                <div className="space-y-3 pt-1">
-                  <LiveRadarSimulator soundEnabled={soundEnabled} />
-                </div>
-              )}
             </div>
           );
         })()}
@@ -410,10 +402,10 @@ export function ProductDetailView({
             {/* Engineering Specifications Table */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-[9px] font-black uppercase tracking-widest text-[#f52538]">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#f52538]">
                   ENGINEERING SPECIFICATIONS
                 </p>
-                <span className="text-[8px] font-mono text-slate-500">REV 4.2 / ISO 9001</span>
+                <span className="text-[9px] font-mono text-slate-500">REV 4.2 / ISO 9001</span>
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs">
@@ -442,8 +434,8 @@ export function ProductDetailView({
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-sm font-black text-slate-900">{wiringData.title}</h4>
-                      <p className="text-[10px] text-slate-500">{wiringData.subtitle}</p>
+                      <h4 className="text-sm font-bold text-slate-900">{wiringData.title}</h4>
+                      <p className="text-xs text-slate-500 font-normal">{wiringData.subtitle}</p>
                     </div>
                     <Badge variant={wiringData.badgeVariant}>{wiringData.badgeText}</Badge>
                   </div>
@@ -483,16 +475,16 @@ export function ProductDetailView({
       <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-[430px] items-center justify-between gap-3 border-t border-slate-200 bg-white/95 px-4 py-3 pb-4 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
         <div className="min-w-0">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-bold text-[#f52538]">
+            <span className="text-xl font-bold text-[#f52538] tracking-tight">
               ${product.price.toFixed(2)}
             </span>
             {product.originalPrice && (
-              <span className="text-xs line-through text-slate-400">
+              <span className="text-xs line-through text-slate-400 font-normal">
                 ${product.originalPrice.toFixed(2)}
               </span>
             )}
           </div>
-          <p className="text-[9px] font-semibold text-slate-500 tracking-wider uppercase">
+          <p className="text-[9.5px] font-bold text-slate-500 tracking-wider uppercase">
             DEALER TIER 1
           </p>
         </div>
@@ -500,14 +492,14 @@ export function ProductDetailView({
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onOpenSupport}
-            className="h-10 rounded-xl border border-slate-300 bg-slate-100 px-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 active:scale-95 transition"
+            className="h-10 rounded-xl border border-slate-300 bg-slate-100 px-3.5 text-xs font-bold text-slate-700 hover:bg-slate-200 active:scale-95 transition tracking-wide"
           >
             INQUIRE
           </button>
 
           <button
             onClick={handleAdd}
-            className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#f52538] px-4 text-xs font-semibold text-white shadow-xs hover:bg-[#ff3347] active:scale-95 transition whitespace-nowrap"
+            className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#f52538] px-4 text-xs font-bold tracking-wide text-white shadow-xs hover:bg-[#ff3347] active:scale-95 transition whitespace-nowrap"
           >
             <ShoppingCart className="h-3.5 w-3.5 shrink-0" />
             <span>{addedToast ? "ADDED!" : "ADD TO ORDER"}</span>

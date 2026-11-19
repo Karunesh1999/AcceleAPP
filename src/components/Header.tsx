@@ -22,7 +22,7 @@ export function Header({
           <button
             onClick={onOpenProfile}
             aria-label="Dealer Profile"
-            className="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-[#f52538] border border-rose-200 hover:bg-rose-100 active:scale-95 transition shadow-2xs font-black text-xs"
+            className="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-[#f52538] border border-rose-200 hover:bg-rose-100 active:scale-95 transition shadow-2xs font-bold text-xs"
           >
             <User className="h-4 w-4" />
           </button>

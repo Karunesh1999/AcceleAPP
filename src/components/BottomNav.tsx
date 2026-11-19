@@ -58,7 +58,7 @@ export function BottomNav({
                 setActive(id);
               }
             }}
-            className={`relative flex flex-col items-center justify-center gap-1 text-[9px] font-bold transition-all ${
+            className={`relative flex flex-col items-center justify-center gap-1 text-[10px] font-bold tracking-tight transition-all ${
               selected ? "text-[#f52538]" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -70,13 +70,13 @@ export function BottomNav({
             <div className="relative">
               <Icon className={`h-5 w-5 transition-transform ${selected ? "scale-110" : ""}`} />
               {badge !== undefined && (
-                <span className="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#f52538] text-[9px] font-black text-white flex items-center justify-center shadow-xs">
+                <span className="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#f52538] text-[9.5px] font-bold text-white flex items-center justify-center shadow-xs">
                   {badge}
                 </span>
               )}
             </div>
 
-            <span className="tracking-tight">{label}</span>
+            <span>{label}</span>
           </button>
         );
       })}

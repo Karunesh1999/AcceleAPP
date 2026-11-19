@@ -42,7 +42,7 @@ export function SplashScreen({ onComplete, soundEnabled }: SplashScreenProps) {
           />
         </div>
 
-        <p className="mt-5 text-[10px] font-black tracking-[0.38em] text-slate-500 uppercase">
+        <p className="mt-5 text-[10px] font-bold tracking-[0.25em] text-slate-500 uppercase">
           AUTOMOTIVE PRO TELEMETRY
         </p>
       </div>

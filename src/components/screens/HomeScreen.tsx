@@ -13,7 +13,9 @@ import {
   ChevronRight, 
   ArrowRight,
   Flame,
-  ShieldCheck
+  ShieldCheck,
+  Maximize2,
+  X
 } from "lucide-react";
 import acceleCar from "@/assets/accele-car.jpg";
 import rvcScene from "@/assets/rvc180-scene.png";
@@ -57,6 +59,73 @@ export function HomeScreen({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+
+  // Full Screen Video Player State
+  const [isFullscreenVideo, setIsFullscreenVideo] = useState(false);
+  const fullscreenVideoRef = useRef<HTMLVideoElement>(null);
+  const [fsIsPlaying, setFsIsPlaying] = useState(true);
+  const [fsIsMuted, setFsIsMuted] = useState(false);
+  const [fsProgress, setFsProgress] = useState(0);
+  const [fsDuration, setFsDuration] = useState(0);
+  const [fsCurrentTime, setFsCurrentTime] = useState(0);
+
+  const handleOpenFullscreen = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+    setIsFullscreenVideo(true);
+    setFsIsPlaying(true);
+  };
+
+  const handleCloseFullscreen = () => {
+    setIsFullscreenVideo(false);
+    if (fullscreenVideoRef.current) {
+      fullscreenVideoRef.current.pause();
+    }
+    if (videoRef.current && isPlaying) {
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const toggleFsPlay = () => {
+    if (!fullscreenVideoRef.current) return;
+    if (fsIsPlaying) {
+      fullscreenVideoRef.current.pause();
+      setFsIsPlaying(false);
+    } else {
+      fullscreenVideoRef.current.play();
+      setFsIsPlaying(true);
+    }
+  };
+
+  const toggleFsMute = () => {
+    if (!fullscreenVideoRef.current) return;
+    fullscreenVideoRef.current.muted = !fsIsMuted;
+    setFsIsMuted(!fsIsMuted);
+  };
+
+  const handleFsTimeUpdate = () => {
+    if (!fullscreenVideoRef.current) return;
+    const current = fullscreenVideoRef.current.currentTime;
+    const dur = fullscreenVideoRef.current.duration || 1;
+    setFsCurrentTime(current);
+    setFsDuration(dur);
+    setFsProgress((current / dur) * 100);
+  };
+
+  const handleFsSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!fullscreenVideoRef.current || !fsDuration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    fullscreenVideoRef.current.currentTime = pos * fsDuration;
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -135,16 +204,16 @@ export function HomeScreen({
       <section className="px-4">
         <div className="mb-3.5 flex items-end justify-between">
           <div>
-            <p className="text-[8px] font-black tracking-[0.2em] text-[#f52538] uppercase">
+            <p className="text-[10px] font-bold tracking-wider text-[#f52538] uppercase">
               HARDWARE ECOSYSTEM
             </p>
-            <h2 className="mt-0.5 text-lg font-bold text-slate-900">
+            <h2 className="mt-0.5 text-lg font-bold tracking-tight text-slate-900">
               Shop by system
             </h2>
           </div>
           <button
             onClick={() => onSelectCategory("all")}
-            className="text-[10px] font-bold text-[#f52538] hover:underline"
+            className="text-xs font-bold text-[#f52538] hover:underline tracking-wide"
           >
             VIEW ALL
           </button>
@@ -167,17 +236,17 @@ export function HomeScreen({
                       <span className="grid h-7 w-7 place-items-center rounded-lg bg-rose-50 text-[#f52538] border border-rose-200/80">
                         {getCategoryIcon(cat.icon)}
                       </span>
-                      <span className="rounded-md bg-rose-50 border border-rose-200 px-2 py-0.5 text-[8px] font-bold tracking-wider text-[#f52538] uppercase">
+                      <span className="rounded-md bg-rose-50 border border-rose-200 px-2 py-0.5 text-[9.5px] font-bold tracking-wider text-[#f52538] uppercase">
                         FLAGSHIP SYSTEM
                       </span>
                     </div>
                     <h3 className="text-base font-bold text-slate-900 leading-tight">
                       {cat.title}
                     </h3>
-                    <p className="mt-1 text-[11px] text-slate-500 line-clamp-1">
+                    <p className="mt-1 text-xs text-slate-500 line-clamp-1 font-medium">
                       Radar vector cameras, blind-spot ADAS & reverse sensors
                     </p>
-                    <p className="mt-2 text-[9px] font-bold uppercase tracking-wider text-[#f52538] flex items-center gap-1">
+                    <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-[#f52538] flex items-center gap-1">
                       <span>{cat.count} AVAILABLE</span>
                       <ChevronRight className="h-3 w-3" />
                     </p>
@@ -214,17 +283,17 @@ export function HomeScreen({
                     {getCategoryIcon(cat.icon)}
                   </span>
                   {/* Count Badge */}
-                  <span className="absolute bottom-2 right-2 rounded-full bg-white/90 border border-slate-200/80 px-2 py-0.5 text-[7px] font-bold tracking-wider text-slate-600 shadow-2xs">
+                  <span className="absolute bottom-2 right-2 rounded-full bg-white/90 border border-slate-200/80 px-2 py-0.5 text-[9px] font-bold tracking-wider text-slate-600 shadow-2xs">
                     {cat.count}
                   </span>
                 </div>
 
                 {/* Bottom Info Section */}
                 <div className="p-3 bg-white flex-1 flex flex-col justify-between">
-                  <h3 className="text-[13px] font-bold text-slate-900 leading-tight line-clamp-1">
+                  <h3 className="text-sm font-bold text-slate-900 leading-tight line-clamp-1">
                     {cat.title}
                   </h3>
-                  <div className="mt-2 flex items-center justify-between text-[9px] font-semibold text-slate-500">
+                  <div className="mt-2 flex items-center justify-between text-[10px] font-semibold text-slate-500">
                     <span>Explore</span>
                     <ChevronRight className="h-3 w-3 text-slate-400 group-hover:text-[#f52538] transition" />
                   </div>
@@ -241,17 +310,17 @@ export function HomeScreen({
         <div className="mb-2.5 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-[#f52538] animate-pulse" />
-            <h2 className="text-xs font-black tracking-wider text-slate-900 uppercase">
+            <h2 className="text-xs font-bold tracking-wider text-slate-900 uppercase">
               ADAS Radar Spotlight
             </h2>
           </div>
-          <span className="rounded-full bg-rose-50 border border-rose-200/80 px-2 py-0.5 text-[8.5px] font-black text-[#f52538] flex items-center gap-1 uppercase tracking-wider">
+          <span className="rounded-full bg-rose-50 border border-rose-200/80 px-2 py-0.5 text-[9.5px] font-bold text-[#f52538] flex items-center gap-1 uppercase tracking-wider">
             <Flame className="w-2.5 h-2.5" /> Flagship
           </span>
         </div>
 
         <article
-          onClick={() => onOpenProduct(flagshipProduct)}
+          onClick={handleOpenFullscreen}
           className="cursor-pointer overflow-hidden rounded-[24px] border border-slate-200 bg-white transition-all hover:border-slate-300 hover:shadow-md active:scale-[0.99] shadow-sm"
         >
           {/* Spotlight Video with Live HUD overlay */}
@@ -271,7 +340,7 @@ export function HomeScreen({
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
 
             <div className="absolute left-3.5 top-3.5 flex items-center gap-2">
-              <span className="flex items-center gap-1.5 rounded-md bg-[#f52538] px-2.5 py-1 text-[8px] font-black tracking-wider text-white shadow-sm">
+              <span className="flex items-center gap-1.5 rounded-md bg-[#f52538] px-2.5 py-1 text-[9.5px] font-bold tracking-wider text-white shadow-sm">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
@@ -280,7 +349,7 @@ export function HomeScreen({
               </span>
             </div>
 
-            {/* Video Controls (Mute / Play-Pause) */}
+            {/* Video Controls (Mute / Play-Pause / Full Screen) */}
             <div className="absolute bottom-3.5 right-3.5 flex items-center gap-2">
               <button
                 type="button"
@@ -305,30 +374,37 @@ export function HomeScreen({
               >
                 {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-white ml-0.5" />}
               </button>
+
+              <button
+                type="button"
+                aria-label="Full screen video"
+                onClick={handleOpenFullscreen}
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-md shadow-md active:scale-90 transition hover:bg-black/80"
+              >
+                <Maximize2 className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
           {/* Minimal Content Bar - lets the video be the hero focus */}
           <div className="p-3.5 flex items-center justify-between gap-3 bg-white">
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 text-[9px] font-bold text-sky-600">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-sky-600">
                 <Radio className="h-3 w-3 shrink-0" />
                 <span className="tracking-wide">180° ACTIVE RADAR</span>
               </div>
-              <h3 className="mt-0.5 text-xs font-black text-slate-900 truncate">
+              <h3 className="mt-0.5 text-xs font-bold text-slate-900 truncate">
                 Moving Object Recognition Camera
               </h3>
             </div>
 
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenProduct(flagshipProduct);
-              }}
-              className="flex items-center gap-1.5 rounded-xl bg-[#f52538] px-3.5 py-2 text-[10px] font-black tracking-wider text-white shadow-xs hover:bg-[#ff3347] active:scale-95 transition shrink-0"
+              onClick={handleOpenFullscreen}
+              aria-label="Play video full screen"
+              className="flex items-center gap-1.5 rounded-xl bg-[#f52538] px-3.5 py-2 text-xs font-bold tracking-wider text-white shadow-xs hover:bg-[#ff3347] active:scale-95 transition shrink-0 cursor-pointer"
             >
-              <span>EXPLORE</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <Maximize2 className="h-3.5 w-3.5" />
+              <span>FULL SCREEN</span>
             </button>
           </div>
         </article>
@@ -353,10 +429,10 @@ export function HomeScreen({
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-black text-slate-900">
+            <p className="text-sm font-bold text-slate-900">
               Direct installer support
             </p>
-            <p className="mt-0.5 text-[11px] text-slate-600">
+            <p className="mt-0.5 text-xs text-slate-600">
               Talk to a certified master technician in the bay
             </p>
           </div>
@@ -364,6 +440,90 @@ export function HomeScreen({
           <ChevronRight className="h-5 w-5 text-slate-500 shrink-0" />
         </button>
       </section>
+
+      {/* Full Screen Cinematic Video Player Overlay */}
+      {isFullscreenVideo && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-between bg-black text-white select-none animate-in fade-in duration-200">
+          {/* Top Bar with Close & Mute */}
+          <div className="relative z-20 flex items-center justify-between px-4 pt-4 pb-3 bg-gradient-to-b from-black/95 via-black/60 to-transparent">
+            <button
+              onClick={handleCloseFullscreen}
+              className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 active:scale-90 transition shrink-0"
+              aria-label="Close full screen video"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <button
+              onClick={toggleFsMute}
+              className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 active:scale-90 transition shrink-0"
+              aria-label={fsIsMuted ? "Unmute audio" : "Mute audio"}
+            >
+              {fsIsMuted ? <VolumeX className="h-4 w-4 text-slate-400" /> : <Volume2 className="h-4 w-4 text-[#f52538]" />}
+            </button>
+          </div>
+
+          {/* Video Display (Tap to Play/Pause) */}
+          <div 
+            onClick={toggleFsPlay}
+            className="flex-1 relative flex items-center justify-center overflow-hidden cursor-pointer bg-black"
+          >
+            <video
+              ref={fullscreenVideoRef}
+              src={rvcVideo}
+              poster={rvcScene}
+              autoPlay
+              muted={fsIsMuted}
+              loop
+              playsInline
+              onTimeUpdate={handleFsTimeUpdate}
+              className="w-full h-full object-contain"
+            />
+
+            {/* Quick Play/Pause Center Indicator on Pause */}
+            {!fsIsPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-2xs pointer-events-none">
+                <div className="grid h-16 w-16 place-items-center rounded-full bg-[#f52538] text-white shadow-xl animate-in zoom-in-75">
+                  <Play className="h-7 w-7 fill-white ml-1" />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom Player Controls & Seek Bar */}
+          <div className="relative z-20 px-4 pb-6 pt-3 bg-gradient-to-t from-black/95 via-black/70 to-transparent space-y-3">
+            {/* Scrubber Progress Bar */}
+            <div 
+              onClick={handleFsSeek}
+              className="group relative h-2 w-full rounded-full bg-white/20 cursor-pointer overflow-hidden"
+            >
+              <div
+                style={{ width: `${fsProgress}%` }}
+                className="h-full bg-[#f52538] transition-all duration-100 relative"
+              />
+            </div>
+
+            {/* Controls Row */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={toggleFsPlay}
+                  className="grid h-10 w-10 place-items-center rounded-full bg-white text-slate-900 active:scale-90 transition hover:bg-slate-200"
+                  aria-label={fsIsPlaying ? "Pause" : "Play"}
+                >
+                  {fsIsPlaying ? <Pause className="h-4 w-4 fill-slate-900" /> : <Play className="h-4 w-4 fill-slate-900 ml-0.5" />}
+                </button>
+
+                <div className="text-xs font-mono text-slate-300 font-medium">
+                  <span>{formatTime(fsCurrentTime)}</span>
+                  <span className="text-slate-500 mx-1">/</span>
+                  <span className="text-slate-400">{formatTime(fsDuration)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

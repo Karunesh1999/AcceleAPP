@@ -99,7 +99,7 @@ export function SupportModal({
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id as typeof activeTab)}
-            className={`flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all ${
+            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
               activeTab === t.id
                 ? "bg-[#f52538] text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
@@ -160,7 +160,7 @@ export function SupportModal({
               <button
                 key={idx}
                 onClick={() => handleSend(p)}
-                className="whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold border border-slate-200"
+                className="whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium border border-slate-200"
               >
                 {p}
               </button>
@@ -190,14 +190,14 @@ export function SupportModal({
       {activeTab === "rma" && (
         <div className="space-y-3 text-xs">
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-            <div className="flex items-center gap-2 text-amber-700 font-black text-xs">
+            <div className="flex items-center gap-2 text-amber-700 font-bold text-xs tracking-wide">
               <FileCheck className="h-4 w-4" />
               <span>3-YEAR BAY WARRANTY PROTECTION</span>
             </div>
-            <p className="text-slate-600 leading-relaxed text-[11px]">
+            <p className="text-slate-600 leading-relaxed text-xs font-normal">
               All Accele pro equipment purchased through authorized accounts carries advance replacement protection. Need an immediate replacement unit dispatched?
             </p>
-            <Button variant="default" size="sm" className="w-full text-xs font-black shadow-xs">
+            <Button variant="default" size="sm" className="w-full text-xs font-bold shadow-xs">
               Start Rapid RMA Ticket
             </Button>
           </div>
@@ -214,11 +214,11 @@ export function SupportModal({
             <PhoneCall className="h-4 w-4" />
             <span className="text-slate-900">Call Bay Tech Desk: (800) 788-1212 Ext. 170</span>
           </div>
-          <span className="text-[10px] text-sky-700 uppercase font-mono font-bold">Toll-Free</span>
+          <span className="text-[10px] text-sky-700 uppercase font-mono font-bold tracking-wider">Toll-Free</span>
         </a>
         <a
           href="mailto:Techsupport@accele.com"
-          className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition border border-slate-200 text-[11px] font-semibold text-slate-700"
+          className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition border border-slate-200 text-xs font-medium text-slate-700"
         >
           <div className="flex items-center gap-2.5 text-sky-600">
             <Mail className="h-4 w-4" />

@@ -225,13 +225,13 @@ export function BookingsScreen({
 
       {/* Screen Header */}
       <section className="px-4 pt-4">
-        <p className="text-[8px] font-black tracking-[0.2em] text-[#f52538] uppercase">
+        <p className="text-[10px] font-bold tracking-wider text-[#f52538] uppercase">
           WHOLESALE DISPATCH & FULFILLMENT
         </p>
-        <h1 className="mt-1.5 text-2xl font-black text-slate-900 leading-tight">
+        <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900 leading-tight">
           Bookings & Orders
         </h1>
-        <p className="text-xs text-slate-600 mt-1">
+        <p className="text-xs text-slate-600 mt-1 font-normal">
           Real-time carrier tracking, bay deliveries, and 1-click reorders.
         </p>
 
@@ -271,7 +271,7 @@ export function BookingsScreen({
                   setActiveFilter(tab.id as typeof activeFilter);
                   if (soundEnabled) playAlertBeep("click");
                 }}
-                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[11px] font-bold border transition-all ${
+                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                   active
                     ? "bg-[#f52538] text-white border-[#f52538] shadow-xs"
                     : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"

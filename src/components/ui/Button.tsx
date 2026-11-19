@@ -36,14 +36,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               variant === "ghost",
             "text-sky-600 underline-offset-4 hover:underline":
               variant === "link",
-            "bg-sky-600 text-white hover:bg-sky-700 font-black shadow-sm":
+            "bg-sky-600 text-white hover:bg-sky-700 font-bold shadow-sm":
               variant === "tech",
             "bg-gradient-to-r from-[#f52538] to-[#ff4757] text-white shadow-md":
               variant === "glow",
             // Sizes
             "h-11 px-5 py-2 text-xs": size === "default",
-            "h-9 px-3 text-[11px]": size === "sm",
-            "h-13 px-7 text-sm font-black": size === "lg",
+            "h-9 px-3.5 text-xs": size === "sm",
+            "h-13 px-7 text-sm font-bold": size === "lg",
             "h-10 w-10 p-0 shrink-0": size === "icon",
             "h-8 px-4 rounded-full text-[10px] uppercase tracking-wider": size === "pill",
           },

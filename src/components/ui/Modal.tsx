@@ -56,9 +56,9 @@ export function Modal({
 
         {title && (
           <div className="mb-4">
-            <h3 className="text-lg font-black text-slate-900">{title}</h3>
+            <h3 className="text-lg font-bold tracking-tight text-slate-900">{title}</h3>
             {description && (
-              <p className="mt-1 text-xs text-slate-500">{description}</p>
+              <p className="mt-1 text-xs text-slate-500 font-normal">{description}</p>
             )}
           </div>
         )}
@@ -125,11 +125,11 @@ export function Sheet({
           <div className="flex items-center justify-between px-6 py-3 border-b border-slate-100">
             <div>
               {subtitle && (
-                <p className="text-[9px] font-bold tracking-widest text-[#f52538] uppercase">
+                <p className="text-[10px] font-bold tracking-wider text-[#f52538] uppercase">
                   {subtitle}
                 </p>
               )}
-              {title && <h3 className="text-base font-black text-slate-900">{title}</h3>}
+              {title && <h3 className="text-base font-bold tracking-tight text-slate-900">{title}</h3>}
             </div>
             <button
               onClick={onClose}

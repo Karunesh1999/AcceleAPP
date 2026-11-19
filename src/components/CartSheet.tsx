@@ -84,7 +84,7 @@ export function CartSheet({
           </div>
 
           <div>
-            <h3 className="text-xl font-black text-slate-900">Purchase Order Dispatched!</h3>
+            <h3 className="text-xl font-bold tracking-tight text-slate-900">Purchase Order Dispatched!</h3>
             <p className="text-xs text-slate-600 mt-1">
               Your dealer order has been routed to Accele Pro Distribution Bay.
             </p>
@@ -161,13 +161,13 @@ export function CartSheet({
                 />
 
                 <div className="flex-1 min-w-0">
-                  <span className="text-[8px] font-mono font-bold text-sky-700">
+                  <span className="text-[9.5px] font-mono font-semibold text-sky-700">
                     {product.sku}
                   </span>
                   <h4 className="text-xs font-bold text-slate-900 truncate">
                     {product.name}
                   </h4>
-                  <div className="text-xs font-black text-slate-900 mt-1">
+                  <div className="text-xs font-bold text-slate-900 mt-1">
                     ${product.price.toFixed(2)}
                   </div>
                 </div>
@@ -220,10 +220,10 @@ export function CartSheet({
             </div>
             <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline">
               <div>
-                <span className="text-sm font-black text-slate-900">Manifest Total</span>
-                <p className="text-[9px] text-[#f52538] font-bold">NET 30 INVOICING AVAILABLE</p>
+                <span className="text-sm font-bold text-slate-900">Manifest Total</span>
+                <p className="text-[9.5px] text-[#f52538] font-bold tracking-wider">NET 30 INVOICING AVAILABLE</p>
               </div>
-              <span className="text-xl font-black text-slate-900">${total.toFixed(2)}</span>
+              <span className="text-xl font-bold text-slate-900 tracking-tight">${total.toFixed(2)}</span>
             </div>
           </div>
 

@@ -203,17 +203,17 @@ export function ProfileScreen({
 
             {/* Name and email */}
             <div className="min-w-0 flex-1">
-              <h2 className="text-sm font-black text-slate-900 truncate">
+              <h2 className="text-sm font-bold text-slate-900 truncate">
                 {dealerName} • {dealerCompany}
               </h2>
-              <p className="text-[11px] text-slate-500 truncate mt-0.5 font-medium">
+              <p className="text-xs text-slate-500 truncate mt-0.5 font-normal">
                 {dealerEmail}
               </p>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-[9px] font-bold text-[#f52538] bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded uppercase">
+                <span className="text-[9.5px] font-bold text-[#f52538] bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded uppercase tracking-wider">
                   Dealer Tier 1
                 </span>
-                <span className="text-[9px] text-slate-400 font-mono">
+                <span className="text-[9.5px] text-slate-400 font-mono font-medium">
                   ACC-8910-US
                 </span>
               </div>
@@ -246,11 +246,11 @@ export function ProfileScreen({
                   <span className="text-xs font-bold text-slate-900">
                     My Wholesale Orders
                   </span>
-                  <span className="bg-rose-50 text-[#f52538] border border-rose-200 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  <span className="bg-rose-50 text-[#f52538] border border-rose-200 text-[9.5px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                     2 IN TRANSIT
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5 font-normal">
                   Track shipments & POs
                 </p>
               </div>

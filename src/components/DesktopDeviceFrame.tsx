@@ -109,6 +109,7 @@ export function DesktopDeviceFrame({ children }: DesktopDeviceFrameProps) {
                 ref={iframeRef}
                 src={initialPath}
                 title="Mobile App Preview"
+                allow="fullscreen"
                 className="w-full h-full border-0 select-auto bg-slate-50 no-scrollbar"
                 style={{
                   colorScheme: "light",

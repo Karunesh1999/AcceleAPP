@@ -93,7 +93,7 @@ export function ProductsScreen({
     <div className="pb-28 bg-slate-50 min-h-full">
       {/* Header and Search */}
       <div className="px-4 pt-4">
-        <p className="text-[8px] font-bold tracking-[0.2em] text-[#f52538] uppercase">
+        <p className="text-[10px] font-bold tracking-wider text-[#f52538] uppercase">
           LIVE INVENTORY & HARDWARE
         </p>
         <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
@@ -137,7 +137,7 @@ export function ProductsScreen({
                   setSelectedCategory(cat.id);
                 }
               }}
-              className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-[10px] font-bold transition-all border border-[#f52538] ${
+              className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-xs font-bold transition-all border border-[#f52538] ${
                 selectedCategory === cat.id
                   ? "bg-[#f52538] text-white shadow-xs"
                   : "bg-white text-slate-700 hover:bg-rose-50/50 shadow-2xs"
@@ -179,13 +179,13 @@ export function ProductsScreen({
                   />
 
                   {/* Tag Badge */}
-                  <span className="absolute left-2.5 top-2.5 rounded-md bg-[#f52538] px-2 py-0.5 text-[7px] font-bold text-white shadow-xs uppercase tracking-wide">
+                  <span className="absolute left-2.5 top-2.5 rounded-md bg-[#f52538] px-2 py-0.5 text-[8.5px] font-bold text-white shadow-xs uppercase tracking-wider">
                     {product.tag}
                   </span>
 
                   {/* In Stock Badge */}
                   {product.inStock && (
-                    <span className="absolute bottom-2.5 right-2.5 rounded-full bg-emerald-50/95 border border-emerald-200/90 px-2 py-0.5 text-[7px] font-bold text-emerald-700 shadow-2xs backdrop-blur-xs">
+                    <span className="absolute bottom-2.5 right-2.5 rounded-full bg-emerald-50/95 border border-emerald-200/90 px-2 py-0.5 text-[8.5px] font-bold text-emerald-700 shadow-2xs backdrop-blur-xs tracking-wider">
                       IN STOCK ({product.stockCount})
                     </span>
                   )}
@@ -202,16 +202,16 @@ export function ProductsScreen({
                   <div className="mt-3 flex items-end justify-between pt-2 border-t border-slate-100">
                     <div className="min-w-0">
                       <div className="flex items-baseline gap-1">
-                        <strong className={`${isFeatured ? "text-base" : "text-sm"} font-bold text-[#f52538]`}>
+                        <strong className={`${isFeatured ? "text-base" : "text-sm"} font-bold text-[#f52538] tracking-tight`}>
                           ${product.price.toFixed(2)}
                         </strong>
                         {product.originalPrice && (
-                          <span className="text-[10px] line-through text-slate-400 font-normal">
+                          <span className="text-[11px] line-through text-slate-400 font-normal">
                             ${product.originalPrice.toFixed(2)}
                           </span>
                         )}
                       </div>
-                      <p className="text-[7.5px] font-semibold text-slate-400 uppercase tracking-wider">
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
                         TIER 1 DEALER
                       </p>
                     </div>
