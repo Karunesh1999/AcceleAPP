@@ -477,7 +477,7 @@ export function ProfileScreen({
 
         {/* Menu Items Card (Clean List) */}
         <div className="rounded-3xl bg-white p-2 border border-slate-200/80 shadow-2xs space-y-0.5 divide-y divide-slate-100">
-          {/* 1. My Wholesale Orders */}
+          {/* 1. My Orders */}
           <button
             onClick={onOpenOrders}
             className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition text-left"
@@ -489,7 +489,7 @@ export function ProfileScreen({
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-slate-900">
-                    My Wholesale Orders
+                    My Orders
                   </span>
                   <span className="bg-rose-50 text-[#f52538] border border-rose-200 text-[9.5px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                     2 IN TRANSIT

@@ -30,6 +30,18 @@ import lightImg from "@/assets/products/lighting/04_LL3.jpg";
 import actuatorImg from "@/assets/products/actuators-relays/05_6102C.jpg";
 import gpsImg from "@/assets/products/gps-av/04_USB2HDMI35.jpg";
 import securityImg from "@/assets/products/security/02_AS450.jpg";
+
+// Official Partner & Internal Brands from accele.com
+import brandAcceleVision from "@/assets/brands/accelevision.png";
+import brandBeuler from "@/assets/brands/beuler.png";
+import brandOptix from "@/assets/brands/optix.png";
+import brandLittworks from "@/assets/brands/littworks.png";
+import brandUsaPro from "@/assets/brands/usapro.png";
+import brandQpHardware from "@/assets/brands/qphardware.png";
+import brandAccentMobile from "@/assets/brands/accentmobile.png";
+import brandAcceleCustom from "@/assets/brands/accelecustom.png";
+import brandZicom from "@/assets/brands/zicom.png";
+
 import { CATEGORIES, PRODUCTS } from "@/data/mockData";
 import { LiveRadarSimulator } from "@/components/LiveRadarSimulator";
 import type { Product } from "@/types";
@@ -41,6 +53,72 @@ const CATEGORY_IMAGES: Record<string, string> = {
   gps: gpsImg,
   security: securityImg,
 };
+
+const PARTNER_BRANDS = [
+  {
+    id: "optix",
+    name: "Optix 360",
+    logo: brandOptix,
+    tagline: "360° Camera & Optical Sensors",
+    category: "cameras",
+  },
+  {
+    id: "littworks",
+    name: "LittWorks",
+    logo: brandLittworks,
+    tagline: "Accent & Bay LED Illumination",
+    category: "lighting",
+  },
+  {
+    id: "beuler",
+    name: "Beüler®",
+    logo: brandBeuler,
+    tagline: "Heavy-Duty Relays & Sockets",
+    category: "wiring",
+  },
+  {
+    id: "accentmobile",
+    name: "Accent Mobile",
+    logo: brandAccentMobile,
+    tagline: "In-Cab Power & USB Charging",
+    category: "gps",
+  },
+  {
+    id: "qphardware",
+    name: "QP Hardware",
+    logo: brandQpHardware,
+    tagline: "Micro Switches & Bay Hardware",
+    category: "wiring",
+  },
+  {
+    id: "usapro",
+    name: "USAPRO Security",
+    logo: brandUsaPro,
+    tagline: "Commercial Fleet Security",
+    category: "security",
+  },
+  {
+    id: "accelecustom",
+    name: "Accele Custom",
+    logo: brandAcceleCustom,
+    tagline: "Custom OEM Integration & Wiring",
+    category: "wiring",
+  },
+  {
+    id: "zicom",
+    name: "Zicom",
+    logo: brandZicom,
+    tagline: "Telematics & Alarm Systems",
+    category: "security",
+  },
+  {
+    id: "accelevision",
+    name: "AcceleVision",
+    logo: brandAcceleVision,
+    tagline: "High-Resolution LCD Video HUDs",
+    category: "cameras",
+  },
+];
 
 interface HomeScreenProps {
   onOpenProduct: (product: Product) => void;
@@ -771,6 +849,86 @@ export function HomeScreen({
           soundEnabled={soundEnabled}
           onExploreProduct={() => onOpenProduct(flagshipProduct)}
         />
+      </section>
+
+      {/* Brand Portfolio & Industry Partners Section */}
+      <section className="px-4 space-y-2.5">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#f52538]" />
+            <h2 className="text-xs font-bold tracking-wider text-slate-900 uppercase">
+              Our Brands & Manufacturing Divisions
+            </h2>
+          </div>
+          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+            9 Divisions
+          </span>
+        </div>
+
+        {/* Horizontal scrollable brand cards */}
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 scroll-smooth">
+          {PARTNER_BRANDS.map((brand) => (
+            <div
+              key={brand.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => onSelectCategory(brand.category)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  onSelectCategory(brand.category);
+                }
+              }}
+              className="flex-shrink-0 w-44 rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-2xs hover:border-[#f52538]/50 hover:shadow-xs active:scale-[0.98] transition cursor-pointer flex flex-col justify-between group"
+            >
+              <div className="h-14 w-full flex items-center justify-center p-2 rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-rose-50/40 group-hover:border-rose-100 transition">
+                <img
+                  src={brand.logo}
+                  alt={brand.name}
+                  className="max-h-10 max-w-full object-contain filter contrast-125 group-hover:scale-105 transition"
+                  loading="lazy"
+                />
+              </div>
+              <div className="mt-2.5">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-[#f52538] transition">
+                    {brand.name}
+                  </h4>
+                  <span className="text-[9px] font-mono text-[#f52538] font-bold bg-rose-50 border border-rose-200/80 px-1.5 py-0.5 rounded-md">
+                    12V
+                  </span>
+                </div>
+                <p className="text-[10.5px] text-slate-500 line-clamp-1 mt-0.5 font-medium">
+                  {brand.tagline}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Industry Associations & ISO Bar */}
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-3 shadow-2xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="grid h-8 w-8 place-items-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 shrink-0">
+              <ShieldCheck className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold text-slate-900 truncate">
+                ISO 9001:2015 Certified Manufacturing
+              </p>
+              <p className="text-[10px] text-slate-500 truncate">
+                Official SEMA Member & MEA Industry Partner
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="rounded-lg bg-slate-100 border border-slate-200 px-2 py-0.5 text-[9px] font-mono font-bold text-slate-700">
+              SEMA
+            </span>
+            <span className="rounded-lg bg-slate-100 border border-slate-200 px-2 py-0.5 text-[9px] font-mono font-bold text-slate-700">
+              MEA
+            </span>
+          </div>
+        </div>
       </section>
 
       {/* Direct Installer Support Card */}
