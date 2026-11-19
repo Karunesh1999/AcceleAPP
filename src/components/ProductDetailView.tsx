@@ -14,6 +14,7 @@ import {
 import type { Product } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { ShareModal } from "@/components/ShareModal";
 import { playAlertBeep } from "@/lib/utils";
 
 interface ProductDetailViewProps {
@@ -176,6 +177,7 @@ export function ProductDetailView({
   const [activeTab, setActiveTab] = useState<"overview" | "specs">("overview");
   const [addedToast, setAddedToast] = useState(false);
   const [shareToast, setShareToast] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   useEffect(() => {
     setActiveTab("overview");
@@ -190,44 +192,11 @@ export function ProductDetailView({
     setTimeout(() => setAddedToast(false), 2000);
   };
 
-  const handleShare = async () => {
+  const handleShare = () => {
     if (soundEnabled) {
       playAlertBeep("click");
     }
-
-    const shareData = {
-      title: `${product.name} | Accele Electronics`,
-      text: `Check out ${product.name} (${product.sku}) on Accele Bay Hardware: $${product.price.toFixed(2)}`,
-      url: window.location.href,
-    };
-
-    let shared = false;
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share(shareData);
-        shared = true;
-      } catch (err: unknown) {
-        if ((err as Error)?.name === "AbortError") {
-          return; // user cancelled the native share dialog
-        }
-      }
-    }
-
-    if (!shared && typeof navigator !== "undefined" && navigator.clipboard) {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-      } catch {
-        const textArea = document.createElement("textarea");
-        textArea.value = window.location.href;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-      }
-    }
-
-    setShareToast(true);
-    setTimeout(() => setShareToast(false), 2200);
+    setIsShareOpen(true);
   };
 
   return (
@@ -259,18 +228,10 @@ export function ProductDetailView({
 
         <button
           onClick={handleShare}
-          className={`grid h-10 w-10 place-items-center rounded-xl border active:scale-95 transition shadow-2xs ${
-            shareToast 
-              ? "bg-emerald-50 text-emerald-600 border-emerald-200" 
-              : "bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border border-slate-200/80"
-          }`}
+          className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200/80 bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 active:scale-95 transition shadow-2xs"
           aria-label="Share Product"
         >
-          {shareToast ? (
-            <Check className="h-4 w-4 text-emerald-600 animate-in zoom-in-75 duration-200" />
-          ) : (
-            <Share2 className="h-4 w-4" />
-          )}
+          <Share2 className="h-4 w-4" />
         </button>
       </header>
 
@@ -506,6 +467,13 @@ export function ProductDetailView({
           </button>
         </div>
       </div>
+
+      {/* In-App Shadcn Share Sheet (Confined to Mobile Viewport) */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        product={product}
+      />
     </div>
   );
 }
