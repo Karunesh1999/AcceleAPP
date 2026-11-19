@@ -147,14 +147,11 @@ export function ProductDetailView({
       <div className="p-4 space-y-5">
         {/* Top Meta info */}
         <div>
-          <div className="flex items-center justify-between text-[10px] font-bold">
-            <span className="text-sky-700 font-mono tracking-wider">
-              MODEL: {product.sku}
-            </span>
+          <div className="flex items-center text-[10px] font-bold">
             <div className="flex items-center gap-1 text-amber-600">
               <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
               <span>{product.rating}</span>
-              <span className="text-slate-500">({product.reviewsCount})</span>
+              <span className="text-slate-500">({product.reviewsCount} reviews)</span>
             </div>
           </div>
 
@@ -164,23 +161,23 @@ export function ProductDetailView({
         </div>
 
         {/* Product Image & Badges */}
-        <div className="relative h-[270px] overflow-hidden rounded-2xl border border-slate-200 bg-white flex items-center justify-center p-6 shadow-xs">
+        <div className="relative h-[280px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
           <img
             src={product.image}
             alt={product.name}
-            className="h-full w-full object-contain filter drop-shadow-sm"
+            className="h-full w-full object-cover object-center"
           />
 
           <Badge
             variant="default"
-            className="absolute left-3 top-3 text-[9px] tracking-wider font-bold shadow-xs uppercase"
+            className="absolute left-3 top-3 text-[9px] tracking-wider font-bold shadow-sm uppercase z-10"
           >
             {product.tag}
           </Badge>
 
           <Badge
             variant="emerald"
-            className="absolute bottom-3 right-3 text-[9px] tracking-wider font-bold"
+            className="absolute bottom-3 right-3 text-[9px] tracking-wider font-bold shadow-sm z-10"
           >
             FLEET TIER IN STOCK ({product.stockCount})
           </Badge>
@@ -278,21 +275,30 @@ export function ProductDetailView({
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs">
-                {Object.entries(product.specs).map(([k, v], idx) => (
-                  <div
-                    key={k}
-                    className={`flex items-center justify-between px-4 py-3 text-xs ${
-                      idx !== Object.entries(product.specs).length - 1
-                        ? "border-b border-slate-100"
-                        : ""
-                    }`}
-                  >
-                    <span className="text-slate-500 font-medium">{k}</span>
-                    <span className="font-bold text-slate-900 text-right max-w-[190px]">
-                      {v}
-                    </span>
-                  </div>
-                ))}
+                {/* Model Specification */}
+                <div className="flex items-center justify-between px-4 py-3 text-xs border-b border-slate-100 bg-slate-50/60">
+                  <span className="text-slate-600 font-bold">Model</span>
+                  <span className="font-bold text-sky-700 font-mono text-right text-xs">
+                    {product.sku}
+                  </span>
+                </div>
+                {Object.entries(product.specs)
+                  .filter(([k]) => k.toLowerCase() !== "sku" && k.toLowerCase() !== "model")
+                  .map(([k, v], idx, arr) => (
+                    <div
+                      key={k}
+                      className={`flex items-center justify-between px-4 py-3 text-xs ${
+                        idx !== arr.length - 1
+                          ? "border-b border-slate-100"
+                          : ""
+                      }`}
+                    >
+                      <span className="text-slate-500 font-medium">{k}</span>
+                      <span className="font-bold text-slate-900 text-right max-w-[190px]">
+                        {v}
+                      </span>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>

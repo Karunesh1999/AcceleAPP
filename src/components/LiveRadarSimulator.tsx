@@ -238,16 +238,6 @@ export function LiveRadarSimulator({
             <span className="text-[9px] text-rose-600 font-bold mt-0.5">Alert</span>
           </button>
         </div>
-
-        {onExploreProduct && (
-          <button
-            onClick={onExploreProduct}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#f52538] text-white text-xs font-bold tracking-wide shadow-sm hover:bg-[#ff3347] active:scale-98 transition"
-          >
-            <span>VIEW RVC180CTD HARDWARE SPECS</span>
-            <span>→</span>
-          </button>
-        )}
       </div>
     </div>
   );
