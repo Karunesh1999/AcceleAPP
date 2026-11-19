@@ -19,7 +19,8 @@ import {
   Building,
   Award,
   Camera,
-  Trash2
+  Trash2,
+  MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { InstallationManualModal } from "@/components/InstallationManualModal";
@@ -46,10 +47,49 @@ export function ProfileScreen({
   onToggleSound,
   onSignOut,
 }: ProfileScreenProps) {
-  const [modalType, setModalType] = useState<"about" | "faq" | "privacy" | "terms" | "edit" | "manuals" | null>(null);
-  const [dealerName, setDealerName] = useState("Marcus Vance");
-  const [dealerCompany, setDealerCompany] = useState("Apex 12V Autoworks");
-  const [dealerEmail, setDealerEmail] = useState("marcus.vance@apex12v.com");
+  const [modalType, setModalType] = useState<"about" | "faq" | "privacy" | "terms" | "manuals" | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [dealerName, setDealerName] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return localStorage.getItem("accele_dealer_name") || "Marcus Vance";
+      } catch {
+        return "Marcus Vance";
+      }
+    }
+    return "Marcus Vance";
+  });
+  const [dealerPhone, setDealerPhone] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return localStorage.getItem("accele_dealer_phone") || "+1 (555) 382-9910";
+      } catch {
+        return "+1 (555) 382-9910";
+      }
+    }
+    return "+1 (555) 382-9910";
+  });
+  const [dealerAddress, setDealerAddress] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return localStorage.getItem("accele_dealer_address") || "1420 W Broadway Rd, Suite 104, Phoenix, AZ 85041";
+      } catch {
+        return "1420 W Broadway Rd, Suite 104, Phoenix, AZ 85041";
+      }
+    }
+    return "1420 W Broadway Rd, Suite 104, Phoenix, AZ 85041";
+  });
+  const [dealerCompany, setDealerCompany] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return localStorage.getItem("accele_dealer_company") || "Apex 12V Autoworks";
+      } catch {
+        return "Apex 12V Autoworks";
+      }
+    }
+    return "Apex 12V Autoworks";
+  });
+  const dealerEmail = "marcus.vance@apex12v.com"; // Account email: strictly locked
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(() => {
     if (typeof window !== "undefined") {
@@ -113,9 +153,224 @@ export function ProfileScreen({
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    setModalType(null);
+    try {
+      localStorage.setItem("accele_dealer_name", dealerName);
+      localStorage.setItem("accele_dealer_phone", dealerPhone);
+      localStorage.setItem("accele_dealer_address", dealerAddress);
+      localStorage.setItem("accele_dealer_company", dealerCompany);
+    } catch (err) {
+      console.warn("Could not save to localStorage:", err);
+    }
+    setIsEditing(false);
+    if (soundEnabled) playAlertBeep("success");
     showToast("Profile details updated successfully!");
   };
+
+  // Dedicated Edit Profile Screen (Replaces cramped dialog box)
+  if (isEditing) {
+    return (
+      <div className="min-h-full bg-slate-50 pb-28 text-slate-900 animate-in fade-in duration-200">
+        {/* Toast Notification */}
+        {toastMessage && (
+          <div className="fixed top-4 inset-x-4 z-50 mx-auto max-w-sm rounded-xl bg-slate-900/95 text-white p-3 text-xs font-bold shadow-xl border border-slate-700 backdrop-blur-md flex items-center justify-between animate-in fade-in slide-in-from-top-2">
+            <span>{toastMessage}</span>
+            <button onClick={() => setToastMessage(null)} className="text-slate-400 hover:text-white">
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
+
+        {/* Top Header with Back Button */}
+        <header className="flex items-center justify-between px-4 py-3 bg-white sticky top-0 z-30 border-b border-slate-100 shadow-2xs">
+          <button
+            onClick={() => setIsEditing(false)}
+            aria-label="Back to Profile"
+            className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 active:scale-95 transition"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+
+          <h1 className="text-base font-bold text-slate-900">Edit Profile</h1>
+
+          <div className="w-10" />
+        </header>
+
+        {/* Edit Form */}
+        <form onSubmit={handleSaveProfile} className="p-4 space-y-4">
+          {/* Avatar Section */}
+          <div className="flex items-center gap-4 p-4 rounded-3xl bg-white border border-slate-200/80 shadow-2xs">
+            <div
+              onClick={handleAvatarClick}
+              className="relative h-16 w-16 rounded-full bg-slate-100 border-2 border-slate-200 overflow-hidden shrink-0 cursor-pointer group flex items-center justify-center text-slate-600 shadow-2xs hover:border-[#f52538] transition-all"
+              title="Click to select profile picture"
+            >
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+              ) : (
+                <User className="h-8 w-8 stroke-[1.5]" />
+              )}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
+                <Camera className="h-5 w-5 drop-shadow-sm" />
+              </div>
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-slate-900 text-sm">Profile Photo</p>
+              <div className="flex items-center gap-3 mt-1.5">
+                <button
+                  type="button"
+                  onClick={handleAvatarClick}
+                  className="text-xs font-bold text-[#f52538] hover:underline cursor-pointer"
+                >
+                  Upload Picture
+                </button>
+                {avatarUrl && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveAvatar}
+                    className="text-xs font-medium text-slate-500 hover:text-rose-600 hover:underline cursor-pointer"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+              aria-label="Upload profile picture"
+            />
+          </div>
+
+          {/* Form Fields Card */}
+          <div className="rounded-3xl bg-white p-5 border border-slate-200/80 shadow-2xs space-y-4 text-xs">
+            {/* 1. Name */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                Full Name / Technician Name
+              </label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={dealerName}
+                  onChange={(e) => setDealerName(e.target.value)}
+                  placeholder="Enter full name"
+                  className="w-full rounded-2xl border border-slate-200 py-2.5 pl-10 pr-3 text-xs text-slate-900 focus:outline-none focus:border-[#f52538] focus:ring-1 focus:ring-[#f52538] bg-slate-50/50 focus:bg-white transition"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* 2. Mobile Number */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                Mobile Number
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <input
+                  type="tel"
+                  value={dealerPhone}
+                  onChange={(e) => setDealerPhone(e.target.value)}
+                  placeholder="+1 (555) 000-0000"
+                  className="w-full rounded-2xl border border-slate-200 py-2.5 pl-10 pr-3 text-xs text-slate-900 focus:outline-none focus:border-[#f52538] focus:ring-1 focus:ring-[#f52538] bg-slate-50/50 focus:bg-white transition"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* 3. Address */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                Bay / Shop Address
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <textarea
+                  value={dealerAddress}
+                  onChange={(e) => setDealerAddress(e.target.value)}
+                  rows={2}
+                  placeholder="Street, Suite, City, State, ZIP"
+                  className="w-full rounded-2xl border border-slate-200 py-2.5 pl-10 pr-3 text-xs text-slate-900 focus:outline-none focus:border-[#f52538] focus:ring-1 focus:ring-[#f52538] bg-slate-50/50 focus:bg-white transition resize-none"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* 4. Company Name */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                Shop / Company Name
+              </label>
+              <div className="relative">
+                <Building className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={dealerCompany}
+                  onChange={(e) => setDealerCompany(e.target.value)}
+                  placeholder="Business or shop name"
+                  className="w-full rounded-2xl border border-slate-200 py-2.5 pl-10 pr-3 text-xs text-slate-900 focus:outline-none focus:border-[#f52538] focus:ring-1 focus:ring-[#f52538] bg-slate-50/50 focus:bg-white transition"
+                />
+              </div>
+            </div>
+
+            {/* 5. Email Address - STRICTLY LOCKED */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                  Wholesale Account Email
+                </label>
+                <span className="flex items-center gap-1 text-[9.5px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full uppercase">
+                  <Lock className="h-3 w-3 text-slate-500" />
+                  Locked
+                </span>
+              </div>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <input
+                  type="email"
+                  value={dealerEmail}
+                  readOnly
+                  disabled
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-100/90 py-2.5 pl-10 pr-10 text-xs text-slate-500 cursor-not-allowed select-none font-mono"
+                />
+                <Lock className="absolute right-3.5 top-3 h-4 w-4 text-slate-400" />
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed">
+                Email address is locked and tied to your wholesale dealer account credentials.
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="pt-2 space-y-2">
+            <Button
+              type="submit"
+              variant="default"
+              size="lg"
+              className="w-full text-xs font-bold py-3 shadow-md active:scale-98"
+            >
+              <Check className="h-4 w-4 mr-1.5" /> Save Changes
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsEditing(false)}
+              className="w-full text-xs font-bold"
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-slate-50 pb-28 text-slate-900">
@@ -202,28 +457,17 @@ export function ProfileScreen({
               />
             </div>
 
-            {/* Name and email */}
+            {/* Name only */}
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-bold text-slate-900 truncate">
                 {dealerName}
               </h2>
-              <p className="text-xs text-slate-500 truncate mt-0.5 font-normal">
-                {dealerEmail}
-              </p>
-              <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-[9.5px] font-bold text-[#f52538] bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded uppercase tracking-wider">
-                  Dealer Tier 1
-                </span>
-                <span className="text-[9.5px] text-slate-400 font-mono font-medium">
-                  ACC-8910-US
-                </span>
-              </div>
             </div>
           </div>
 
           {/* Edit pencil button */}
           <button
-            onClick={() => setModalType("edit")}
+            onClick={() => setIsEditing(true)}
             className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 active:scale-95 transition shrink-0 ml-2"
             title="Edit profile"
           >
@@ -401,123 +645,6 @@ export function ProfileScreen({
           </button>
         </div>
       </div>
-
-      {/* Edit Profile Modal */}
-      {modalType === "edit" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 border border-slate-200 shadow-2xl text-slate-900 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-sm font-black text-slate-900">Edit Profile</h3>
-              <button
-                onClick={() => setModalType(null)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveProfile} className="space-y-3 text-xs">
-              {/* Picture Upload row inside modal */}
-              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-50 border border-slate-200">
-                <div 
-                  onClick={handleAvatarClick}
-                  className="h-12 w-12 rounded-full bg-white border border-slate-200 overflow-hidden shrink-0 cursor-pointer relative group flex items-center justify-center text-slate-600 shadow-2xs"
-                  title="Click to select new picture"
-                >
-                  {avatarUrl ? (
-                    <img src={avatarUrl} alt="Avatar preview" className="h-full w-full object-cover" />
-                  ) : (
-                    <User className="h-6 w-6 stroke-[1.5]" />
-                  )}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
-                    <Camera className="h-4 w-4" />
-                  </div>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-bold text-slate-900 text-xs">Profile Photo</p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <button
-                      type="button"
-                      onClick={handleAvatarClick}
-                      className="text-[10.5px] font-bold text-[#f52538] hover:underline cursor-pointer"
-                    >
-                      Upload Picture
-                    </button>
-                    {avatarUrl && (
-                      <button
-                        type="button"
-                        onClick={handleRemoveAvatar}
-                        className="text-[10.5px] font-medium text-slate-500 hover:text-rose-600 hover:underline cursor-pointer"
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                  Technician / Contact Name
-                </label>
-                <input
-                  type="text"
-                  value={dealerName}
-                  onChange={(e) => setDealerName(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 p-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#f52538]"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                  Shop / Company Name
-                </label>
-                <input
-                  type="text"
-                  value={dealerCompany}
-                  onChange={(e) => setDealerCompany(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 p-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#f52538]"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                  Bay Email Address
-                </label>
-                <input
-                  type="email"
-                  value={dealerEmail}
-                  onChange={(e) => setDealerEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 p-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#f52538]"
-                  required
-                />
-              </div>
-
-              <div className="pt-2 flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setModalType(null)}
-                  className="flex-1 text-xs"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="default"
-                  size="sm"
-                  className="flex-1 text-xs font-bold"
-                >
-                  Save Changes
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* About Accele Modal */}
       {modalType === "about" && (
