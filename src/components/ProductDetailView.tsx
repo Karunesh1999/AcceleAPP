@@ -8,8 +8,8 @@ import {
   Check, 
   ShoppingCart, 
   FileText, 
-  Wrench,
-  AlertCircle
+  AlertCircle,
+  Share2
 } from "lucide-react";
 import type { Product } from "@/types";
 import { Button } from "@/components/ui/Button";
@@ -174,17 +174,13 @@ export function ProductDetailView({
   onOpenSupport,
 }: ProductDetailViewProps) {
   const hasWiringGuide = product.category === "cameras" || product.category === "security";
-  const [activeTab, setActiveTab] = useState<"overview" | "specs" | "simulator" | "wiring">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "specs">("overview");
   const [addedToast, setAddedToast] = useState(false);
+  const [shareToast, setShareToast] = useState(false);
 
-  // Reset tab if current tab is not supported for this product category
   useEffect(() => {
-    if (activeTab === "simulator" && product.category !== "cameras") {
-      setActiveTab("overview");
-    } else if (activeTab === "wiring" && !hasWiringGuide) {
-      setActiveTab("overview");
-    }
-  }, [product.id, product.category, hasWiringGuide, activeTab]);
+    setActiveTab("overview");
+  }, [product.id]);
 
   const handleAdd = () => {
     onAddToCart(product);
@@ -195,8 +191,56 @@ export function ProductDetailView({
     setTimeout(() => setAddedToast(false), 2000);
   };
 
+  const handleShare = async () => {
+    if (soundEnabled) {
+      playAlertBeep("click");
+    }
+
+    const shareData = {
+      title: `${product.name} | Accele Electronics`,
+      text: `Check out ${product.name} (${product.sku}) on Accele Bay Hardware: $${product.price.toFixed(2)}`,
+      url: window.location.href,
+    };
+
+    let shared = false;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        shared = true;
+      } catch (err: unknown) {
+        if ((err as Error)?.name === "AbortError") {
+          return; // user cancelled the native share dialog
+        }
+      }
+    }
+
+    if (!shared && typeof navigator !== "undefined" && navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+      } catch {
+        const textArea = document.createElement("textarea");
+        textArea.value = window.location.href;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+    }
+
+    setShareToast(true);
+    setTimeout(() => setShareToast(false), 2200);
+  };
+
   return (
-    <div className="min-h-full bg-slate-50 pb-32 text-slate-900">
+    <div className="min-h-full bg-slate-50 pb-32 text-slate-900 relative">
+      {/* Toast Notification for Share */}
+      {shareToast && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full bg-slate-900/95 px-4 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-none">
+          <Check className="h-3.5 w-3.5 text-emerald-400" />
+          <span>Product link copied to clipboard!</span>
+        </div>
+      )}
+
       {/* Sticky Header */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-xl shadow-2xs">
         <button
@@ -215,11 +259,19 @@ export function ProductDetailView({
         </div>
 
         <button
-          onClick={onOpenSupport}
-          className="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-[#f52538] border border-rose-200 active:scale-95 transition shadow-2xs"
-          aria-label="Dealer Support"
+          onClick={handleShare}
+          className={`grid h-10 w-10 place-items-center rounded-xl border active:scale-95 transition shadow-2xs ${
+            shareToast 
+              ? "bg-emerald-50 text-emerald-600 border-emerald-200" 
+              : "bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border border-slate-200/80"
+          }`}
+          aria-label="Share Product"
         >
-          <Wrench className="h-4 w-4" />
+          {shareToast ? (
+            <Check className="h-4 w-4 text-emerald-600 animate-in zoom-in-75 duration-200" />
+          ) : (
+            <Share2 className="h-4 w-4" />
+          )}
         </button>
       </header>
 
@@ -288,21 +340,19 @@ export function ProductDetailView({
           </div>
         </div>
 
-        {/* Tab Switcher */}
+        {/* Tab Switcher - Clean 2-tab layout */}
         <div className="flex rounded-xl bg-slate-200/80 p-1 border border-slate-200">
           {[
             { id: "overview", label: "Overview" },
-            ...(product.category === "cameras" ? [{ id: "simulator", label: "Live HUD" }] : []),
-            { id: "specs", label: "Specs" },
-            ...(hasWiringGuide ? [{ id: "wiring", label: "Wiring" }] : []),
+            { id: "specs", label: "Specifications" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex-1 py-2 text-[10px] font-bold rounded-lg transition-all ${
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
                 activeTab === tab.id
                   ? "bg-white text-slate-900 shadow-xs font-black"
-                  : "text-slate-600 hover:text-slate-900"
+                  : "text-slate-600 hover:text-slate-900 font-semibold"
               }`}
             >
               {tab.label}
@@ -343,123 +393,126 @@ export function ProductDetailView({
                   ))}
                 </div>
               </div>
+
+              {/* Live Radar Simulator for cameras */}
+              {product.category === "cameras" && (
+                <div className="space-y-3 pt-1">
+                  <LiveRadarSimulator soundEnabled={soundEnabled} />
+                </div>
+              )}
             </div>
           );
         })()}
 
-        {/* Tab 2: Live Radar Simulator */}
-        {activeTab === "simulator" && (
-          <div className="space-y-3 animate-in fade-in">
-            <LiveRadarSimulator soundEnabled={soundEnabled} />
-          </div>
-        )}
-
-        {/* Tab 3: Specs Table */}
+        {/* Tab 2: Specifications (Specs & Wiring Guide) */}
         {activeTab === "specs" && (
-          <div className="space-y-3 animate-in fade-in">
-            <div className="flex items-center justify-between">
-              <p className="text-[9px] font-black uppercase tracking-widest text-[#f52538]">
-                ENGINEERING SPECIFICATIONS
-              </p>
-              <span className="text-[8px] font-mono text-slate-500">REV 4.2 / ISO 9001</span>
-            </div>
+          <div className="space-y-4 animate-in fade-in">
+            {/* Engineering Specifications Table */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-[9px] font-black uppercase tracking-widest text-[#f52538]">
+                  ENGINEERING SPECIFICATIONS
+                </p>
+                <span className="text-[8px] font-mono text-slate-500">REV 4.2 / ISO 9001</span>
+              </div>
 
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs">
-              {Object.entries(product.specs).map(([k, v], idx) => (
-                <div
-                  key={k}
-                  className={`flex items-center justify-between px-4 py-3 text-xs ${
-                    idx !== Object.entries(product.specs).length - 1
-                      ? "border-b border-slate-100"
-                      : ""
-                  }`}
-                >
-                  <span className="text-slate-500 font-medium">{k}</span>
-                  <span className="font-bold text-slate-900 text-right max-w-[190px]">
-                    {v}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Tab 4: Wiring & Installation */}
-        {activeTab === "wiring" && hasWiringGuide && (() => {
-          const wiringData = CATEGORY_WIRING_DATA[product.category] || CATEGORY_WIRING_DATA.cameras;
-          return (
-            <div className="space-y-3 animate-in fade-in">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900">{wiringData.title}</h4>
-                    <p className="text-[10px] text-slate-500">{wiringData.subtitle}</p>
+              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs">
+                {Object.entries(product.specs).map(([k, v], idx) => (
+                  <div
+                    key={k}
+                    className={`flex items-center justify-between px-4 py-3 text-xs ${
+                      idx !== Object.entries(product.specs).length - 1
+                        ? "border-b border-slate-100"
+                        : ""
+                    }`}
+                  >
+                    <span className="text-slate-500 font-medium">{k}</span>
+                    <span className="font-bold text-slate-900 text-right max-w-[190px]">
+                      {v}
+                    </span>
                   </div>
-                  <Badge variant={wiringData.badgeVariant}>{wiringData.badgeText}</Badge>
-                </div>
-
-                <div className="p-3 bg-slate-50 rounded-xl font-mono text-[11px] space-y-1.5 border border-slate-200 text-slate-800">
-                  {wiringData.pins.map((pin, i) => (
-                    <div key={i} className="flex justify-between items-center gap-2">
-                      <span className={`${pin.colorClass} shrink-0`}>{pin.label}</span>
-                      <span className="text-right text-[10.5px] text-slate-700">{pin.desc}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-start gap-2 p-3 bg-amber-50/60 rounded-xl text-xs text-amber-900 border border-amber-200">
-                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                  <span className="text-[11px] leading-relaxed">
-                    {wiringData.note}
-                  </span>
-                </div>
-
-                <Button
-                  onClick={onOpenSupport}
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-xs font-bold"
-                >
-                  <FileText className="w-3.5 h-3.5 mr-2 text-[#f52538]" /> {wiringData.buttonLabel}
-                </Button>
+                ))}
               </div>
             </div>
-          );
-        })()}
+
+            {/* Vehicle Wiring & Harness Guide */}
+            {hasWiringGuide && (() => {
+              const wiringData = CATEGORY_WIRING_DATA[product.category] || CATEGORY_WIRING_DATA.cameras;
+              return (
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm font-black text-slate-900">{wiringData.title}</h4>
+                      <p className="text-[10px] text-slate-500">{wiringData.subtitle}</p>
+                    </div>
+                    <Badge variant={wiringData.badgeVariant}>{wiringData.badgeText}</Badge>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 rounded-xl font-mono text-[11px] space-y-1.5 border border-slate-200 text-slate-800">
+                    {wiringData.pins.map((pin, i) => (
+                      <div key={i} className="flex justify-between items-center gap-2">
+                        <span className={`${pin.colorClass} shrink-0`}>{pin.label}</span>
+                        <span className="text-right text-[10.5px] text-slate-700">{pin.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex items-start gap-2 p-3 bg-amber-50/60 rounded-xl text-xs text-amber-900 border border-amber-200">
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <span className="text-[11px] leading-relaxed">
+                      {wiringData.note}
+                    </span>
+                  </div>
+
+                  <Button
+                    onClick={onOpenSupport}
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-xs font-bold"
+                  >
+                    <FileText className="w-3.5 h-3.5 mr-2 text-[#f52538]" /> {wiringData.buttonLabel}
+                  </Button>
+                </div>
+              );
+            })()}
+          </div>
+        )}
       </div>
 
       {/* Floating Bottom Action Bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-[430px] items-center gap-3 border-t border-slate-200 bg-white/95 p-4 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
-        <div className="mr-auto">
-          <div className="flex items-baseline gap-1">
-            <span className="text-xl font-black text-[#f52538]">
+      <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-[430px] items-center justify-between gap-3 border-t border-slate-200 bg-white/95 px-4 py-3 pb-4 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+        <div className="min-w-0">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-lg font-bold text-[#f52538]">
               ${product.price.toFixed(2)}
             </span>
             {product.originalPrice && (
-              <span className="text-[11px] line-through text-slate-400">
+              <span className="text-xs line-through text-slate-400">
                 ${product.originalPrice.toFixed(2)}
               </span>
             )}
           </div>
-          <p className="text-[8px] font-black text-[#f52538] tracking-wider uppercase">
+          <p className="text-[9px] font-semibold text-slate-500 tracking-wider uppercase">
             DEALER TIER 1
           </p>
         </div>
 
-        <button
-          onClick={onOpenSupport}
-          className="rounded-xl border border-slate-300 bg-slate-100 px-4 py-3.5 text-[10px] font-black text-slate-800 hover:bg-slate-200 active:scale-95 transition"
-        >
-          INQUIRE
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={onOpenSupport}
+            className="h-10 rounded-xl border border-slate-300 bg-slate-100 px-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 active:scale-95 transition"
+          >
+            INQUIRE
+          </button>
 
-        <button
-          onClick={handleAdd}
-          className="flex items-center gap-2 rounded-xl bg-[#f52538] px-5 py-3.5 text-[11px] font-black text-white shadow-sm hover:bg-[#ff3347] active:scale-95 transition"
-        >
-          <ShoppingCart className="h-4 w-4" />
-          <span>{addedToast ? "ADDED!" : "ADD TO ORDER"}</span>
-        </button>
+          <button
+            onClick={handleAdd}
+            className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#f52538] px-4 text-xs font-semibold text-white shadow-xs hover:bg-[#ff3347] active:scale-95 transition whitespace-nowrap"
+          >
+            <ShoppingCart className="h-3.5 w-3.5 shrink-0" />
+            <span>{addedToast ? "ADDED!" : "ADD TO ORDER"}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

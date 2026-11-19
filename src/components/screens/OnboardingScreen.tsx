@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowRight, Radio, Cpu, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { ONBOARDING_SLIDES } from "@/data/mockData";
 import { playAlertBeep } from "@/lib/utils";
 
@@ -7,6 +7,11 @@ interface OnboardingScreenProps {
   onComplete: () => void;
   soundEnabled: boolean;
 }
+
+const SLIDE_SHORT_TEXTS: Record<number, string> = {
+  1: "180° active radar & camera coverage.",
+  2: "Vehicle wiring guides & bay-ready hardware.",
+};
 
 export function OnboardingScreen({
   onComplete,
@@ -26,11 +31,7 @@ export function OnboardingScreen({
     }
   };
 
-  const getSlideIcon = (iconName: string) => {
-    if (iconName === "radar") return <Radio className="h-5 w-5 text-sky-400" />;
-    if (iconName === "wiring") return <Cpu className="h-5 w-5 text-[#ff3347]" />;
-    return <ShieldCheck className="h-5 w-5 text-amber-400" />;
-  };
+  const isLast = currentPage === ONBOARDING_SLIDES.length - 1;
 
   return (
     <main className="relative mx-auto flex h-full min-h-screen w-full max-w-[430px] flex-col justify-between overflow-hidden bg-slate-950 text-white select-none">
@@ -42,8 +43,8 @@ export function OnboardingScreen({
         className="absolute inset-0 h-full w-full object-cover transition-all duration-700 animate-in fade-in"
       />
 
-      {/* Multi-stage Gradient Scrim for crisp text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 via-55% to-black/30 pointer-events-none" />
+      {/* Delicate Gradient Scrim to showcase bright 4K imagery while keeping bottom text crisp */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 via-35% to-transparent pointer-events-none" />
 
       {/* Top Header bar with Skip */}
       <div className="relative z-20 flex items-center justify-end px-6 pt-6">
@@ -55,49 +56,32 @@ export function OnboardingScreen({
         </button>
       </div>
 
-      {/* Bottom Content Area: Feature Badge + Typography + Bottom Controls */}
-      <div className="relative z-20 flex flex-col px-6 pb-8 pt-4">
-        {/* Floating Feature Capsule */}
-        <div className="flex items-center gap-2.5 mb-3.5">
-          <div className="grid h-10 w-10 place-items-center rounded-xl border border-white/15 bg-white/10 backdrop-blur-md shadow-xs">
-            {getSlideIcon(slide.icon)}
-          </div>
-          <div className="rounded-xl border border-white/15 bg-white/10 backdrop-blur-md px-3 py-1.5 shadow-xs">
-            <span className="text-[10px] font-mono font-bold tracking-wider text-slate-200">
-              {slide.metric}
-            </span>
-          </div>
-        </div>
-
-        {/* Eyebrow */}
-        <p className="text-[10px] font-black tracking-[0.25em] text-[#ff3347] uppercase">
-          {slide.eyebrow}
-        </p>
-
+      {/* Bottom Content Area: Minimalist & Clean */}
+      <div className="relative z-20 flex flex-col px-6 pb-9 pt-4">
         {/* Headline */}
-        <h2 className="mt-1.5 text-[30px] font-black leading-[1.12] tracking-[-0.03em] text-white">
+        <h1 className="text-3xl font-extrabold tracking-tight text-white leading-tight">
           {slide.title.replace(slide.highlightWord, "")}
-          <span className="text-[#ff3347]">
+          <span className="text-[#f52538]">
             {slide.highlightWord}
           </span>
-        </h2>
+        </h1>
 
-        {/* Description */}
-        <p className="mt-2.5 text-[13.5px] leading-relaxed text-slate-300 max-w-[340px]">
-          {slide.text}
+        {/* Minimal 1-line Subtitle */}
+        <p className="mt-2 text-sm text-slate-300 font-medium">
+          {SLIDE_SHORT_TEXTS[slide.id] || slide.text}
         </p>
 
-        {/* Bottom Navigation Indicators & Next Button */}
-        <div className="flex items-center justify-between pt-7">
+        {/* Bottom Navigation Indicators & Bigger Action Button */}
+        <div className="flex items-center justify-between pt-8">
           {/* Progress Indicators */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             {ONBOARDING_SLIDES.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentPage(i)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   i === currentPage
-                    ? "w-8 bg-[#ff3347] shadow-xs"
+                    ? "w-8 bg-[#f52538] shadow-xs"
                     : "w-2 bg-white/30 hover:bg-white/50"
                 }`}
                 aria-label={`Slide ${i + 1}`}
@@ -105,13 +89,13 @@ export function OnboardingScreen({
             ))}
           </div>
 
-          {/* Action Button */}
+          {/* Action Button - Substantially bigger, comfortable to tap */}
           <button
             onClick={handleNext}
-            className="flex h-12 items-center gap-2.5 rounded-2xl bg-[#ff3347] px-6 text-xs font-black tracking-wider text-white shadow-lg shadow-red-950/50 active:scale-95 transition hover:bg-[#ff4d5e]"
+            className="flex h-13 min-w-[136px] items-center justify-center gap-2.5 rounded-2xl bg-[#f52538] px-7 text-sm font-bold tracking-wide text-white shadow-xl shadow-red-950/50 active:scale-95 transition hover:bg-[#ff3347]"
           >
-            <span>{currentPage === ONBOARDING_SLIDES.length - 1 ? "ENTER APP" : "NEXT"}</span>
-            <ArrowRight className="h-4 w-4" />
+            <span>{isLast ? "GET STARTED" : "NEXT"}</span>
+            <ArrowRight className="h-4.5 w-4.5" />
           </button>
         </div>
       </div>

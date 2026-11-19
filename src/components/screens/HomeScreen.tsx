@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { 
+  Search,
   Camera, 
   Zap, 
   Cpu, 
@@ -38,6 +39,7 @@ interface HomeScreenProps {
   onOpenProduct: (product: Product) => void;
   onSelectCategory: (categoryId: string) => void;
   onOpenSupport: () => void;
+  onOpenSearch?: () => void;
   soundEnabled: boolean;
 }
 
@@ -45,6 +47,7 @@ export function HomeScreen({
   onOpenProduct,
   onSelectCategory,
   onOpenSupport,
+  onOpenSearch,
   soundEnabled,
 }: HomeScreenProps) {
   const flagshipProduct = 
@@ -77,36 +80,52 @@ export function HomeScreen({
   };
 
   return (
-    <div className="space-y-6 pb-28 bg-slate-50">
-      {/* Hero Banner Section */}
+    <div className="space-y-4 pb-28 bg-slate-50">
+      {/* Search Bar Section (Above Hero Banner) */}
       <section className="px-4 pt-3">
-        <div className="relative overflow-hidden rounded-[26px] border border-slate-200 bg-slate-900 shadow-md">
+        <div
+          onClick={onOpenSearch}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onOpenSearch?.();
+            }
+          }}
+          className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200/90 bg-white px-4 py-3 text-slate-800 shadow-2xs hover:border-[#f52538]/50 hover:shadow-xs active:scale-[0.99] transition cursor-pointer"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Search className="h-4 w-4 text-[#f52538] shrink-0" />
+            <span className="text-xs text-slate-400 font-medium truncate">
+              Search by model, SKU, or hardware...
+            </span>
+          </div>
+          <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-[9px] font-bold text-slate-600 uppercase tracking-wider shrink-0 group-hover:bg-[#f52538] group-hover:text-white transition">
+            Search
+          </span>
+        </div>
+      </section>
+
+      {/* Hero Banner Section */}
+      <section className="px-4">
+        <div className="relative overflow-hidden rounded-[26px] border border-slate-200/80 bg-slate-950 shadow-md">
           <img
             src={acceleCar}
             alt="Accele automotive technology"
-            className="h-[240px] w-full object-cover object-center opacity-90"
+            className="h-[225px] w-full object-cover object-center brightness-[0.82] contrast-[1.12]"
           />
-          {/* Gradients to balance light & enhance text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-black/15" />
+          {/* Dark cinematic shade on left to tame harsh sun glare */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/35 to-transparent pointer-events-none" />
+          {/* Smooth bottom vignette for crisp text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
 
-          {/* Top Pill */}
-          <div className="absolute left-5 top-5 rounded-md border border-white/20 bg-black/40 px-2.5 py-1 text-[8px] font-black tracking-[0.18em] text-white backdrop-blur-md">
-            EST. 1993 · PRO SERIES
-          </div>
-
-          {/* Hero Content */}
-          <div className="absolute bottom-5 left-5 right-5 text-white">
-            <p className="text-[10px] font-black tracking-[0.2em] text-sky-400 uppercase">
-              AUTOMOTIVE INTELLIGENCE
-            </p>
-            <h1 className="mt-1 text-[30px] font-black leading-[1.02] tracking-[-0.04em] text-white">
-              Drive smarter.
-              <br />
-              <span className="text-[#f52538]">See everything.</span>
+          {/* Minimalist & Concise Hero Content */}
+          <div className="absolute bottom-4 left-4 right-4 text-white">
+            <h1 className="text-xl font-bold tracking-tight text-white leading-tight">
+              Drive Smarter. <span className="text-[#f52538]">See Everything.</span>
             </h1>
-            <p className="mt-2 max-w-[280px] text-xs leading-relaxed text-slate-200">
-              Pro-grade safety, lighting and control systems engineered for every install.
+            <p className="mt-1 text-[11px] text-slate-300 font-medium">
+              Pro-grade safety, lighting & vehicle control systems.
             </p>
           </div>
         </div>
@@ -218,17 +237,16 @@ export function HomeScreen({
 
       {/* ADAS Spotlight Section */}
       <section className="px-4">
-        <div className="mb-3.5 flex items-end justify-between">
-          <div>
-            <p className="text-[8px] font-black tracking-[0.2em] text-[#f52538] uppercase">
-              ADAS SPOTLIGHT
-            </p>
-            <h2 className="mt-0.5 text-lg font-bold text-slate-900">
-              Safety, reimagined
+        {/* Minimal Header */}
+        <div className="mb-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#f52538] animate-pulse" />
+            <h2 className="text-xs font-black tracking-wider text-slate-900 uppercase">
+              ADAS Radar Spotlight
             </h2>
           </div>
-          <span className="rounded-full bg-rose-50 border border-rose-200 px-2.5 py-1 text-[8px] font-black text-[#f52538] flex items-center gap-1">
-            <Flame className="w-2.5 h-2.5" /> FLAGSHIP
+          <span className="rounded-full bg-rose-50 border border-rose-200/80 px-2 py-0.5 text-[8.5px] font-black text-[#f52538] flex items-center gap-1 uppercase tracking-wider">
+            <Flame className="w-2.5 h-2.5" /> Flagship
           </span>
         </div>
 
@@ -237,7 +255,7 @@ export function HomeScreen({
           className="cursor-pointer overflow-hidden rounded-[24px] border border-slate-200 bg-white transition-all hover:border-slate-300 hover:shadow-md active:scale-[0.99] shadow-sm"
         >
           {/* Spotlight Video with Live HUD overlay */}
-          <div className="relative h-56 overflow-hidden bg-slate-950 group">
+          <div className="relative h-60 overflow-hidden bg-slate-950 group">
             <video
               ref={videoRef}
               src={rvcVideo}
@@ -252,7 +270,7 @@ export function HomeScreen({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
 
-            <div className="absolute left-4 top-4 flex items-center gap-2">
+            <div className="absolute left-3.5 top-3.5 flex items-center gap-2">
               <span className="flex items-center gap-1.5 rounded-md bg-[#f52538] px-2.5 py-1 text-[8px] font-black tracking-wider text-white shadow-sm">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -263,7 +281,7 @@ export function HomeScreen({
             </div>
 
             {/* Video Controls (Mute / Play-Pause) */}
-            <div className="absolute bottom-4 right-4 flex items-center gap-2">
+            <div className="absolute bottom-3.5 right-3.5 flex items-center gap-2">
               <button
                 type="button"
                 aria-label={isMuted ? "Unmute video" : "Mute video"}
@@ -271,7 +289,7 @@ export function HomeScreen({
                   e.stopPropagation();
                   setIsMuted(!isMuted);
                 }}
-                className="grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-md shadow-md active:scale-90 transition hover:bg-black/80"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-md shadow-md active:scale-90 transition hover:bg-black/80"
               >
                 {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4 text-[#f52538]" />}
               </button>
@@ -283,30 +301,34 @@ export function HomeScreen({
                   e.stopPropagation();
                   togglePlay();
                 }}
-                className="grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-md shadow-md active:scale-90 transition hover:bg-black/80"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-md shadow-md active:scale-90 transition hover:bg-black/80"
               >
                 {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-white ml-0.5" />}
               </button>
             </div>
           </div>
 
-          <div className="p-5">
-            <div className="flex items-center gap-2 text-[9px] font-bold text-sky-600">
-              <Radio className="h-3.5 w-3.5" />
-              <span>180° ACTIVE RADAR COVERAGE</span>
+          {/* Minimal Content Bar - lets the video be the hero focus */}
+          <div className="p-3.5 flex items-center justify-between gap-3 bg-white">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 text-[9px] font-bold text-sky-600">
+                <Radio className="h-3 w-3 shrink-0" />
+                <span className="tracking-wide">180° ACTIVE RADAR</span>
+              </div>
+              <h3 className="mt-0.5 text-xs font-black text-slate-900 truncate">
+                Moving Object Recognition Camera
+              </h3>
             </div>
 
-            <h3 className="mt-1.5 text-xl font-bold leading-tight text-slate-900">
-              Moving Object Recognition Camera
-            </h3>
-
-            <p className="mt-2 text-xs leading-relaxed text-slate-600">
-              Wide-angle vision with visual and audible alerts before a hazard enters your vehicle’s path.
-            </p>
-
-            <button className="mt-4 flex w-full items-center justify-between rounded-xl bg-[#f52538] px-4 py-3.5 text-[11px] font-black tracking-wider text-white shadow-sm hover:bg-[#ff3347] transition">
-              <span>EXPLORE RVC180CTD</span>
-              <ArrowRight className="h-4 w-4" />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenProduct(flagshipProduct);
+              }}
+              className="flex items-center gap-1.5 rounded-xl bg-[#f52538] px-3.5 py-2 text-[10px] font-black tracking-wider text-white shadow-xs hover:bg-[#ff3347] active:scale-95 transition shrink-0"
+            >
+              <span>EXPLORE</span>
+              <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </article>

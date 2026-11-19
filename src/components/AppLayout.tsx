@@ -152,6 +152,10 @@ export function AppLayout() {
   };
 
   const handleTabChange = (tab: NavTab) => {
+    if (tab === "Cart") {
+      setIsCartOpen(true);
+      return;
+    }
     switch (tab) {
       case "Home":
         navigate("/");
@@ -204,10 +208,7 @@ export function AppLayout() {
               {/* Top Header (Shown on Home, Products, and Bookings; Profile has its own dedicated header matching design) */}
               {activeTab !== "Profile" && (
                 <Header
-                  cartCount={totalCartCount}
-                  onOpenCart={() => setIsCartOpen(true)}
                   onOpenProfile={() => navigate("/profile")}
-                  onOpenSearch={() => setIsSearchModalOpen(true)}
                 />
               )}
 
@@ -218,6 +219,7 @@ export function AppLayout() {
                     onOpenProduct={(prod) => navigate(`/product/${prod.sku}`)}
                     onSelectCategory={handleCategorySelectFromHome}
                     onOpenSupport={() => setIsSupportModalOpen(true)}
+                    onOpenSearch={() => setIsSearchModalOpen(true)}
                     soundEnabled={soundEnabled}
                   />
                 )}
@@ -254,7 +256,14 @@ export function AppLayout() {
               </main>
 
               {/* Bottom Tab Bar */}
-              <BottomNav active={activeTab} setActive={handleTabChange} activeOrderCount={2} />
+              <BottomNav 
+                active={activeTab} 
+                setActive={handleTabChange} 
+                activeOrderCount={2}
+                cartCount={totalCartCount}
+                isCartOpen={isCartOpen}
+                onOpenCart={() => setIsCartOpen(true)}
+              />
             </>
           )}
 

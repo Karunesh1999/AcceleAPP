@@ -1,5 +1,5 @@
 // Auto-generated from official Accele Electronics Catalog (accele.com)
-import nightDrive from '@/assets/night-drive.jpg';
+import onboardingBg from '@/assets/onboarding-bg.jpg';
 import rvcScene from '@/assets/rvc180-scene.png';
 import type { Category, Product } from '@/types';
 
@@ -62,7 +62,7 @@ export const ONBOARDING_SLIDES = [
     highlightWord: "blind spot.",
     highlightColor: "#22c7f3",
     text: "180° smart camera radar coverage detects movement before it enters your vehicle's path. Complete situational awareness for fleet & consumer vehicles.",
-    image: nightDrive,
+    image: onboardingBg,
     icon: "radar",
     metric: "180° FIELD OF VIEW",
     badge: "ACTIVE RADAR",

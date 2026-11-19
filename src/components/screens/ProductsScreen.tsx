@@ -156,69 +156,78 @@ export function ProductsScreen({
             No products found matching &quot;{query}&quot;. Try adjusting your filters.
           </div>
         ) : (
-          filtered.map((product, i) => (
-            <div
-              key={product.sku}
-              onClick={() => onOpenProduct(product)}
-              className={`${
-                i === 0 ? "col-span-2" : "col-span-1"
-              } cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white text-left transition-all hover:border-slate-300 hover:shadow-sm active:scale-[0.99] shadow-2xs flex flex-col justify-between`}
-            >
-              {/* Product Image Section */}
+          filtered.map((product, i) => {
+            const isFeatured = i === 0;
+            return (
               <div
+                key={product.sku}
+                onClick={() => onOpenProduct(product)}
                 className={`${
-                  i === 0 ? "h-56" : "h-36"
-                } relative overflow-hidden bg-slate-100/80 flex items-center justify-center p-3.5 border-b border-slate-200`}
+                  isFeatured ? "col-span-2" : "col-span-1"
+                } group cursor-pointer overflow-hidden rounded-2xl border border-slate-200/90 bg-white text-left transition-all hover:border-slate-300 hover:shadow-md active:scale-[0.99] shadow-2xs flex flex-col justify-between`}
               >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-full w-full object-contain mix-blend-multiply transition duration-300 hover:scale-105"
-                />
+                {/* Product Image Section - Flipkart style spacious showcase */}
+                <div
+                  className={`${
+                    isFeatured ? "h-56" : "aspect-square w-full"
+                  } relative overflow-hidden bg-slate-50/70 flex items-center justify-center p-3.5 border-b border-slate-100`}
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="h-full w-full object-contain mix-blend-multiply transition duration-300 group-hover:scale-105"
+                  />
 
-                {/* Tag Badge */}
-                <span className="absolute left-3 top-3 rounded-md bg-[#f52538] px-2 py-0.5 text-[7px] font-bold text-white shadow-xs uppercase tracking-wide">
-                  {product.tag}
-                </span>
-
-                {/* In Stock Badge */}
-                {product.inStock && (
-                  <span className="absolute bottom-3 right-3 rounded-full bg-emerald-50 border border-emerald-200/90 px-2 py-0.5 text-[7px] font-bold text-emerald-700 shadow-2xs backdrop-blur-xs">
-                    IN STOCK ({product.stockCount})
+                  {/* Tag Badge */}
+                  <span className="absolute left-2.5 top-2.5 rounded-md bg-[#f52538] px-2 py-0.5 text-[7px] font-bold text-white shadow-xs uppercase tracking-wide">
+                    {product.tag}
                   </span>
-                )}
-              </div>
 
-              {/* Product Info Section */}
-              <div className="p-3.5 flex-1 flex flex-col justify-between bg-white">
-                <div>
-                  <p className="text-[8px] font-semibold font-mono tracking-wider text-sky-700">
-                    SKU · {product.sku}
-                  </p>
-                  <h3 className="mt-1 text-[13px] font-semibold leading-snug text-slate-900 line-clamp-2">
-                    {product.name}
-                  </h3>
+                  {/* In Stock Badge */}
+                  {product.inStock && (
+                    <span className="absolute bottom-2.5 right-2.5 rounded-full bg-emerald-50/95 border border-emerald-200/90 px-2 py-0.5 text-[7px] font-bold text-emerald-700 shadow-2xs backdrop-blur-xs">
+                      IN STOCK ({product.stockCount})
+                    </span>
+                  )}
                 </div>
 
-                <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-slate-100">
+                {/* Product Info Section - Pinned to bottom (Flipkart style) */}
+                <div className="p-3 flex-1 flex flex-col justify-between bg-white">
                   <div>
-                    <strong className="text-[15px] font-bold text-[#f52538]">
-                      ${product.price.toFixed(2)}
-                    </strong>
-                    <p className="text-[7px] font-semibold text-slate-500">TIER 1 DEALER</p>
+                    <h3 className={`${isFeatured ? "text-sm" : "text-xs"} font-semibold leading-snug text-slate-900 line-clamp-2`}>
+                      {product.name}
+                    </h3>
                   </div>
 
-                  <button
-                    onClick={(e) => handleQuickAdd(e, product)}
-                    aria-label={`Add ${product.name} to cart`}
-                    className="grid h-8 w-8 place-items-center rounded-lg bg-slate-100/70 text-slate-500/80 hover:bg-slate-200/70 hover:text-slate-700 transition active:scale-90 border border-slate-200/80 shadow-2xs"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                  </button>
+                  <div className="mt-3 flex items-end justify-between pt-2 border-t border-slate-100">
+                    <div className="min-w-0">
+                      <div className="flex items-baseline gap-1">
+                        <strong className={`${isFeatured ? "text-base" : "text-sm"} font-bold text-[#f52538]`}>
+                          ${product.price.toFixed(2)}
+                        </strong>
+                        {product.originalPrice && (
+                          <span className="text-[10px] line-through text-slate-400 font-normal">
+                            ${product.originalPrice.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[7.5px] font-semibold text-slate-400 uppercase tracking-wider">
+                        TIER 1 DEALER
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={(e) => handleQuickAdd(e, product)}
+                      aria-label={`Add ${product.name} to cart`}
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-600 hover:bg-[#f52538] hover:text-white transition active:scale-90 border border-slate-200/80 shadow-2xs"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
