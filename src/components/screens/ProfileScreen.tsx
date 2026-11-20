@@ -682,7 +682,7 @@ export function ProfileScreen({
             size="sm"
             className="w-full py-3 text-xs font-bold rounded-2xl shadow-xs cursor-pointer"
           >
-            <ShieldCheck className="h-4 w-4 mr-2" /> Start Rapid RMA Ticket
+            <ShieldCheck className="h-4 w-4 mr-2" /> Start Rapid Return Ticket
           </Button>
         </div>
       </div>

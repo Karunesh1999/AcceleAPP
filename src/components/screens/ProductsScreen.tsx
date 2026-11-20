@@ -93,10 +93,7 @@ export function ProductsScreen({
     <div className="pb-28 bg-slate-50 min-h-full">
       {/* Header and Search */}
       <div className="px-4 pt-4">
-        <p className="text-[10px] font-bold tracking-wider text-[#f52538] uppercase">
-          LIVE INVENTORY & HARDWARE
-        </p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 leading-tight">
           Find the right hardware
         </h1>
 

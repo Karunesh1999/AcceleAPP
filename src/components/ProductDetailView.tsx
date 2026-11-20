@@ -82,14 +82,9 @@ export function ProductDetailView({
   soundEnabled,
   onOpenSupport,
 }: ProductDetailViewProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "specs">("overview");
   const [addedToast, setAddedToast] = useState(false);
   const [shareToast, setShareToast] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
-
-  useEffect(() => {
-    setActiveTab("overview");
-  }, [product.id]);
 
   const handleAdd = () => {
     onAddToCart(product);
@@ -205,31 +200,11 @@ export function ProductDetailView({
           </div>
         </div>
 
-        {/* Tab Switcher - Clean 2-tab layout */}
-        <div className="flex rounded-xl bg-slate-200/80 p-1 border border-slate-200">
-          {[
-            { id: "overview", label: "Overview" },
-            { id: "specs", label: "Specifications" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                activeTab === tab.id
-                  ? "bg-white text-slate-900 shadow-xs font-bold"
-                  : "text-slate-600 hover:text-slate-900 font-semibold"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab 1: Overview */}
-        {activeTab === "overview" && (() => {
+        {/* 1. Overview Section */}
+        {(() => {
           const overviewInfo = getCategoryOverview(product.category);
           return (
-            <div className="space-y-4 animate-in fade-in">
+            <div className="space-y-4">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-[#f52538]">
                   {overviewInfo.eyebrow}
@@ -262,47 +237,41 @@ export function ProductDetailView({
           );
         })()}
 
-        {/* Tab 2: Specifications (Specs & Wiring Guide) */}
-        {activeTab === "specs" && (
-          <div className="space-y-4 animate-in fade-in">
-            {/* Engineering Specifications Table */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#f52538]">
-                  ENGINEERING SPECIFICATIONS
-                </p>
-                <span className="text-[9px] font-mono text-slate-500">REV 4.2 / ISO 9001</span>
-              </div>
+        {/* 2. Specifications Section */}
+        <div className="space-y-3 pt-1">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#f52538]">
+              ENGINEERING SPECIFICATIONS
+            </p>
+          </div>
 
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs">
-                {/* Model Specification */}
-                <div className="flex items-center justify-between px-4 py-3 text-xs border-b border-slate-100 bg-slate-50/60">
-                  <span className="text-slate-600 font-bold">Model</span>
-                  <span className="font-bold text-sky-700 font-mono text-right text-xs">
-                    {product.sku}
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs">
+            {/* Model Specification */}
+            <div className="flex items-center justify-between px-4 py-3 text-xs border-b border-slate-100 bg-slate-50/60">
+              <span className="text-slate-600 font-bold">Model</span>
+              <span className="font-bold text-sky-700 font-mono text-right text-xs">
+                {product.sku}
+              </span>
+            </div>
+            {Object.entries(product.specs)
+              .filter(([k]) => k.toLowerCase() !== "sku" && k.toLowerCase() !== "model")
+              .map(([k, v], idx, arr) => (
+                <div
+                  key={k}
+                  className={`flex items-center justify-between px-4 py-3 text-xs ${
+                    idx !== arr.length - 1
+                      ? "border-b border-slate-100"
+                      : ""
+                  }`}
+                >
+                  <span className="text-slate-500 font-medium">{k}</span>
+                  <span className="font-bold text-slate-900 text-right max-w-[190px]">
+                    {v}
                   </span>
                 </div>
-                {Object.entries(product.specs)
-                  .filter(([k]) => k.toLowerCase() !== "sku" && k.toLowerCase() !== "model")
-                  .map(([k, v], idx, arr) => (
-                    <div
-                      key={k}
-                      className={`flex items-center justify-between px-4 py-3 text-xs ${
-                        idx !== arr.length - 1
-                          ? "border-b border-slate-100"
-                          : ""
-                      }`}
-                    >
-                      <span className="text-slate-500 font-medium">{k}</span>
-                      <span className="font-bold text-slate-900 text-right max-w-[190px]">
-                        {v}
-                      </span>
-                    </div>
-                  ))}
-              </div>
-            </div>
+              ))}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Floating Bottom Action Bar */}

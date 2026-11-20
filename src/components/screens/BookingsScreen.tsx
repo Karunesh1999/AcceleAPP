@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { 
   Truck, 
   CheckCircle2, 
@@ -32,7 +32,7 @@ export interface OrderItem {
 export interface BookingOrder {
   id: string;
   poNumber: string;
-  status: "in-transit" | "completed" | "rma";
+  status: "in-transit" | "completed";
   statusLabel: string;
   carrier: string;
   trackingNumber: string;
@@ -132,20 +132,39 @@ const INITIAL_ORDERS: BookingOrder[] = [
     total: 422.0,
     tier: "DEALER TIER 1",
   },
+];
+
+export interface ReturnOrder {
+  id: string;
+  originalOrderId: string;
+  status: "approved" | "shipped" | "completed";
+  statusLabel: string;
+  carrier: string;
+  trackingNumber: string;
+  eta: string;
+  date: string;
+  currentStep: number;
+  steps: string[];
+  product: Product;
+  quantity: number;
+  reason: string;
+}
+
+const INITIAL_RETURNS: ReturnOrder[] = [
   {
-    id: "RMA-4091",
-    poNumber: "WARRANTY SWAP #RVC-CAM",
-    status: "rma",
+    id: "RET-4091",
+    originalOrderId: "ORD-8870",
+    status: "shipped",
     statusLabel: "Advance Unit Shipped",
     carrier: "UPS Next Day Air",
     trackingNumber: "1Z88291048299901",
     eta: "Tomorrow by 10:30 AM",
     date: "Nov 15, 2026",
     currentStep: 2,
-    steps: ["RMA Authorized", "Priority Air Shipped", "Local Transit", "Delivered"],
-    items: [{ product: prodRVC180, quantity: 1 }],
-    total: 0.0,
-    tier: "WARRANTY REPLACEMENT",
+    steps: ["Return Requested", "Return Approved", "Priority Air Shipped", "Delivered"],
+    product: prodRVC180,
+    quantity: 1,
+    reason: "Defective Sensor - Warranty Swap",
   },
 ];
 
@@ -154,12 +173,51 @@ export function BookingsScreen({
   onAddToCart,
   soundEnabled,
 }: BookingsScreenProps) {
-  const [activeFilter, setActiveFilter] = useState<"all" | "in-transit" | "completed" | "rma">("all");
+  const [activeFilter, setActiveFilter] = useState<"all" | "in-transit" | "completed" | "returns">("all");
+  const [returnList] = useState<ReturnOrder[]>(INITIAL_RETURNS);
   const [copiedTracking, setCopiedTracking] = useState<string | null>(null);
   const [copiedInvoice, setCopiedInvoice] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [trackingModalOrder, setTrackingModalOrder] = useState<BookingOrder | null>(null);
   const [invoiceModalOrder, setInvoiceModalOrder] = useState<BookingOrder | null>(null);
+
+  // Bottom Sheet Swipe Down/Up Gesture State
+  const [sheetDragY, setSheetDragY] = useState(0);
+  const [isSheetDragging, setIsSheetDragging] = useState(false);
+  const sheetStartYRef = useRef(0);
+
+  const handleSheetPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    sheetStartYRef.current = e.clientY;
+    setIsSheetDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handleSheetPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isSheetDragging) return;
+    const delta = e.clientY - sheetStartYRef.current;
+    if (delta > 0) {
+      setSheetDragY(delta);
+    } else {
+      setSheetDragY(delta * 0.15); // gentle resistance when swiping up
+    }
+  };
+
+  const handleSheetPointerUp = (e: React.PointerEvent<HTMLDivElement>, closeFn: () => void) => {
+    if (!isSheetDragging) return;
+    setIsSheetDragging(false);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      // ignore
+    }
+    const delta = e.clientY - sheetStartYRef.current;
+    if (delta > 60) {
+      setSheetDragY(0);
+      closeFn();
+    } else {
+      setSheetDragY(0);
+    }
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -195,6 +253,42 @@ export function BookingsScreen({
     showToast(`Reorder added: ${order.items.length} items to order cart!`);
   };
 
+  const handleOpenReturnTracking = (ret: ReturnOrder) => {
+    setTrackingModalOrder({
+      id: ret.id,
+      poNumber: `WARRANTY RETURN #${ret.id}`,
+      status: "in-transit",
+      statusLabel: ret.statusLabel,
+      carrier: ret.carrier,
+      trackingNumber: ret.trackingNumber,
+      eta: ret.eta,
+      date: ret.date,
+      currentStep: ret.currentStep,
+      steps: ret.steps,
+      items: [{ product: ret.product, quantity: ret.quantity }],
+      total: 0.0,
+      tier: "WARRANTY RETURN",
+    });
+  };
+
+  const handleOpenReturnSlip = (ret: ReturnOrder) => {
+    setInvoiceModalOrder({
+      id: ret.id,
+      poNumber: `WARRANTY RETURN #${ret.id}`,
+      status: "completed",
+      statusLabel: "Return Approved",
+      carrier: ret.carrier,
+      trackingNumber: ret.trackingNumber,
+      eta: ret.eta,
+      date: ret.date,
+      currentStep: 4,
+      steps: ret.steps,
+      items: [{ product: ret.product, quantity: ret.quantity }],
+      total: 0.0,
+      tier: "WARRANTY RETURN",
+    });
+  };
+
   // Filtered orders
   const filteredOrders = INITIAL_ORDERS.filter((order) => {
     if (activeFilter !== "all" && order.status !== activeFilter) {
@@ -205,7 +299,7 @@ export function BookingsScreen({
 
   const inTransitCount = INITIAL_ORDERS.filter((o) => o.status === "in-transit").length;
   const completedCount = INITIAL_ORDERS.filter((o) => o.status === "completed").length;
-  const rmaCount = INITIAL_ORDERS.filter((o) => o.status === "rma").length;
+  const returnsCount = returnList.length;
 
   return (
     <div className="min-h-full bg-slate-50 pb-28 text-slate-900">
@@ -228,13 +322,13 @@ export function BookingsScreen({
           Bookings & Orders
         </h1>
 
-        {/* Filter Pills: [ All ] [ In-Transit (2) ] [ Completed ] [ RMA ] */}
+        {/* Filter Pills: [ All ] [ In-Transit ] [ Completed ] [ Returns ] */}
         <div className="mt-3.5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {[
             { id: "all", label: `All (${INITIAL_ORDERS.length})` },
             { id: "in-transit", label: `In-Transit (${inTransitCount})` },
             { id: "completed", label: `Completed (${completedCount})` },
-            { id: "rma", label: `RMA (${rmaCount})` },
+            { id: "returns", label: `Returns (${returnsCount})` },
           ].map((tab) => {
             const active = activeFilter === tab.id;
             return (
@@ -259,7 +353,127 @@ export function BookingsScreen({
 
       {/* Orders List Container */}
       <section className="px-4 mt-4 space-y-4">
-        {filteredOrders.length === 0 ? (
+        {activeFilter === "returns" ? (
+          <div className="space-y-4">
+            {/* Active Return Cards */}
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                Active Return Shipments
+              </p>
+              {returnList.map((ret) => (
+                <div
+                  key={ret.id}
+                  className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs space-y-3.5"
+                >
+                  {/* Top Bar: Status Badge & ETA */}
+                  <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <Badge variant="destructive">
+                      Return In-Transit
+                    </Badge>
+
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800">
+                      <Clock className="h-3 w-3 text-amber-600 shrink-0" />
+                      {ret.eta}
+                    </span>
+                  </div>
+
+                  {/* Return Reason & Original Order */}
+                  <div className="text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70">
+                    <span className="font-semibold text-slate-700">Reason:</span> {ret.reason}
+                    <span className="block text-[10px] text-slate-400 mt-0.5 font-mono">
+                      Original Order: {ret.originalOrderId} • Registered Bay Return
+                    </span>
+                  </div>
+
+                  {/* Carrier Bar */}
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50 p-2.5 border border-slate-200/80 text-xs">
+                    <div className="flex items-center gap-2 text-slate-700">
+                      <Truck className="h-4 w-4 text-[#f52538] shrink-0" />
+                      <div>
+                        <span className="font-bold text-slate-900">{ret.carrier}:</span>{" "}
+                        <span className="font-mono text-[11px] text-slate-600">
+                          {ret.trackingNumber}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => handleCopyTracking(ret.trackingNumber, e)}
+                      className="p-1 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition"
+                      title="Copy Tracking Number"
+                    >
+                      {copiedTracking === ret.trackingNumber ? (
+                        <Check className="h-3.5 w-3.5 text-emerald-600" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[10px] font-bold text-slate-600">
+                      <span>{ret.steps[ret.currentStep - 1]}</span>
+                      <span>Step {ret.currentStep} of {ret.steps.length}</span>
+                    </div>
+                    <div className="relative h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-[#f52538] transition-all duration-500"
+                        style={{
+                          width: `${(ret.currentStep / ret.steps.length) * 100}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Product Info */}
+                  <div
+                    onClick={() => onOpenProduct(ret.product)}
+                    className="flex items-center gap-3 p-2 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-100/80 transition cursor-pointer"
+                  >
+                    <div className="h-10 w-10 rounded-lg bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0">
+                      <img
+                        src={ret.product.image}
+                        alt={ret.product.name}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold text-slate-900 truncate">
+                        {ret.product.name}
+                      </p>
+                      <p className="text-[10px] font-mono text-slate-500">
+                        SKU: {ret.product.sku} • Qty: {ret.quantity}
+                      </p>
+                    </div>
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+                    <Button
+                      onClick={() => handleOpenReturnTracking(ret)}
+                      variant="outline"
+                      size="sm"
+                      className="text-[10px] font-bold text-slate-800 cursor-pointer"
+                    >
+                      <Truck className="h-3 w-3 mr-1 text-sky-600" />
+                      Track Return
+                    </Button>
+                    <Button
+                      onClick={() => handleOpenReturnSlip(ret)}
+                      variant="outline"
+                      size="sm"
+                      className="text-[10px] font-bold text-slate-800 cursor-pointer"
+                    >
+                      <FileText className="h-3 w-3 mr-1 text-amber-600" />
+                      Return Slip
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : filteredOrders.length === 0 ? (
           <div className="text-center py-12 rounded-2xl border border-dashed border-slate-300 bg-white p-6">
             <Package className="h-10 w-10 text-slate-400 mx-auto stroke-[1.5]" />
             <p className="mt-3 text-sm font-bold text-slate-800">No matching orders found</p>
@@ -280,7 +494,6 @@ export function BookingsScreen({
         ) : (
           filteredOrders.map((order) => {
             const isCompleted = order.status === "completed";
-            const isRMA = order.status === "rma";
 
             return (
               <div
@@ -289,15 +502,7 @@ export function BookingsScreen({
               >
                 {/* Order Top Bar: Status Badge & ETA */}
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                  <Badge
-                    variant={
-                      isCompleted
-                        ? "emerald"
-                        : isRMA
-                        ? "destructive"
-                        : "cyan"
-                    }
-                  >
+                  <Badge variant={isCompleted ? "emerald" : "cyan"}>
                     {order.statusLabel}
                   </Badge>
 
@@ -341,11 +546,7 @@ export function BookingsScreen({
                   <div className="relative h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
-                        isCompleted
-                          ? "bg-emerald-500"
-                          : isRMA
-                          ? "bg-rose-500"
-                          : "bg-sky-500"
+                        isCompleted ? "bg-emerald-500" : "bg-sky-500"
                       }`}
                       style={{
                         width: `${(order.currentStep / order.steps.length) * 100}%`,
@@ -447,33 +648,33 @@ export function BookingsScreen({
           />
 
           {/* Drawer Panel */}
-          <div className="relative z-50 w-full max-w-[430px] max-h-[90dvh] flex flex-col rounded-t-[32px] border-t border-slate-200 bg-white text-slate-900 shadow-[0_-12px_40px_rgba(0,0,0,0.18)] animate-in slide-in-from-bottom duration-300">
-            {/* Grab Handle */}
-            <div className="flex justify-center pt-3 pb-1 cursor-grab">
-              <div className="h-1.5 w-12 rounded-full bg-slate-300" />
+          <div 
+            style={{
+              transform: `translateY(${Math.max(0, sheetDragY)}px)`,
+              transition: isSheetDragging ? "none" : "transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+            className="relative z-50 w-full max-w-[430px] max-h-[90dvh] flex flex-col rounded-t-[32px] border-t border-slate-200 bg-white text-slate-900 shadow-[0_-12px_40px_rgba(0,0,0,0.18)] animate-in slide-in-from-bottom duration-300"
+          >
+            {/* Grab Handle - Swipe Down to Close */}
+            <div 
+              onPointerDown={handleSheetPointerDown}
+              onPointerMove={handleSheetPointerMove}
+              onPointerUp={(e) => handleSheetPointerUp(e, () => setTrackingModalOrder(null))}
+              onPointerCancel={(e) => handleSheetPointerUp(e, () => setTrackingModalOrder(null))}
+              className="flex flex-col items-center justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing touch-none select-none hover:bg-slate-50/50 rounded-t-[32px] transition-colors"
+              title="Swipe down to close"
+            >
+              <div className="h-1.5 w-12 rounded-full bg-slate-300 hover:bg-slate-400 transition-colors" />
             </div>
 
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <h3 className="text-sm font-black text-slate-900 tracking-tight">
-                    Live Dispatch Journey
-                  </h3>
-                </div>
-                <p className="text-[10.5px] font-mono text-slate-500 mt-0.5">
-                  {trackingModalOrder.id} • {trackingModalOrder.carrier}
-                </p>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                  Live Dispatch Journey
+                </h3>
               </div>
-              <button
-                type="button"
-                onClick={() => setTrackingModalOrder(null)}
-                className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 active:scale-95 transition cursor-pointer"
-                aria-label="Close"
-              >
-                <X className="h-4 w-4" />
-              </button>
             </div>
 
             {/* Scrollable Sheet Content */}
@@ -667,33 +868,30 @@ export function BookingsScreen({
           />
 
           {/* Drawer Panel */}
-          <div className="relative z-50 w-full max-w-[430px] max-h-[92dvh] flex flex-col rounded-t-[32px] border-t border-slate-200 bg-white text-slate-900 shadow-[0_-12px_40px_rgba(0,0,0,0.18)] animate-in slide-in-from-bottom duration-300">
-            {/* Grab Handle */}
-            <div className="flex justify-center pt-3 pb-1 cursor-grab">
-              <div className="h-1.5 w-12 rounded-full bg-slate-300" />
+          <div 
+            style={{
+              transform: `translateY(${Math.max(0, sheetDragY)}px)`,
+              transition: isSheetDragging ? "none" : "transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+            className="relative z-50 w-full max-w-[430px] max-h-[92dvh] flex flex-col rounded-t-[32px] border-t border-slate-200 bg-white text-slate-900 shadow-[0_-12px_40px_rgba(0,0,0,0.18)] animate-in slide-in-from-bottom duration-300"
+          >
+            {/* Grab Handle - Swipe Down to Close */}
+            <div 
+              onPointerDown={handleSheetPointerDown}
+              onPointerMove={handleSheetPointerMove}
+              onPointerUp={(e) => handleSheetPointerUp(e, () => setInvoiceModalOrder(null))}
+              onPointerCancel={(e) => handleSheetPointerUp(e, () => setInvoiceModalOrder(null))}
+              className="flex flex-col items-center justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing touch-none select-none hover:bg-slate-50/50 rounded-t-[32px] transition-colors"
+              title="Swipe down to close"
+            >
+              <div className="h-1.5 w-12 rounded-full bg-slate-300 hover:bg-slate-400 transition-colors" />
             </div>
 
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-black text-slate-900 tracking-tight">
-                    Wholesale Invoice
-                  </h3>
-                  <Badge variant={invoiceModalOrder.status === "rma" ? "destructive" : "emerald"}>
-                    {invoiceModalOrder.status === "rma" ? "Warranty Swap" : "Net 30 Active"}
-                  </Badge>
-                </div>
-                <p className="text-[10px] text-slate-500 font-medium">
-                  Accele Electronics Inc. • Commercial Bay Billing
-                </p>
-              </div>
-              <button
-                onClick={() => setInvoiceModalOrder(null)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                Invoice
+              </h3>
             </div>
 
             {/* Scrollable Receipt Body */}
@@ -793,7 +991,7 @@ export function BookingsScreen({
                     <span className="font-mono font-bold">${invoiceModalOrder.total.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-slate-600">
-                    <span>Wholesale Tier Discount:</span>
+                    <span>Tier Discount:</span>
                     <span className="font-bold text-emerald-600">Applied (Tier 1 Preferred)</span>
                   </div>
                   <div className="flex justify-between text-slate-600">
@@ -810,12 +1008,6 @@ export function BookingsScreen({
                       ${invoiceModalOrder.total.toFixed(2)}
                     </span>
                   </div>
-                </div>
-
-                {/* ISO & Bay Warranty Trust Note */}
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200/60 text-[10.5px] text-emerald-800">
-                  <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <span>Official Accele 12V Wholesale invoice certified under ISO 9001 with 3-Year Bay Protection.</span>
                 </div>
               </div>
 

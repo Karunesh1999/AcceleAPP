@@ -110,7 +110,7 @@ export function SupportModal({
           </button>
           <div className="min-w-0">
             <h1 className="text-sm font-bold tracking-tight text-slate-900 truncate">
-              Bay Technical Support Desk
+              Support Desk
             </h1>
             <p className="text-[10px] text-slate-500 truncate">
               Instant installer dispatch & warranty assistance
@@ -134,7 +134,7 @@ export function SupportModal({
         <div className="flex rounded-xl bg-slate-200/80 p-1 border border-slate-200 shrink-0">
           {[
             { id: "chat", label: "Live Tech Chat" },
-            { id: "rma", label: "Warranty / RMA" },
+            { id: "rma", label: "Warranty/Return" },
           ].map((t) => (
             <button
               key={t.id}
@@ -153,15 +153,6 @@ export function SupportModal({
 
         {activeTab === "chat" && (
           <div className="flex-1 flex flex-col space-y-3 min-h-0">
-            {/* Tech Status Pill */}
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs shrink-0">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-bold text-emerald-800">Master Tech Tyler Online</span>
-              </div>
-              <span className="text-[10px] text-slate-500 font-mono">Bay #4 (California HQ)</span>
-            </div>
-
             {/* Chat scroll area */}
             <div
               ref={chatScrollRef}
@@ -246,7 +237,7 @@ export function SupportModal({
               {rmaSubmitted ? (
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-800 font-bold">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <span>RMA ticket created! RMA #RMA-849201 assigned.</span>
+                  <span>Return ticket created! Ticket #RT-849201 assigned.</span>
                 </div>
               ) : (
                 <Button
@@ -258,7 +249,7 @@ export function SupportModal({
                   size="sm"
                   className="w-full text-xs font-bold shadow-xs cursor-pointer"
                 >
-                  Start Rapid RMA Ticket
+                  Start Rapid Return Ticket
                 </Button>
               )}
             </div>
