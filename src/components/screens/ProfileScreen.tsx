@@ -51,7 +51,7 @@ export function ProfileScreen({
   onSignOut,
 }: ProfileScreenProps) {
   const [modalType, setModalType] = useState<"about" | "faq" | "privacy" | "terms" | "manuals" | null>(null);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1, 2, 3, 4]);
   const [isEditing, setIsEditing] = useState(false);
   const [dealerName, setDealerName] = useState(() => {
     if (typeof window !== "undefined") {
@@ -541,15 +541,8 @@ export function ProfileScreen({
           <div className="w-10" />
         </header>
 
-        <div className="p-4 space-y-3.5">
-          <div className="rounded-2xl bg-sky-50 border border-sky-200 p-3.5 text-xs text-sky-900 space-y-1">
-            <p className="font-bold">Bay Installation Knowledge Base</p>
-            <p className="text-[11px] text-sky-700 leading-relaxed">
-              Frequently asked wiring, calibration, and wholesale questions answered by California Master Technicians.
-            </p>
-          </div>
-
-          <div className="space-y-2.5">
+        <div className="p-4 space-y-3">
+          <div className="space-y-3">
             {[
               {
                 q: "How do I disable dynamic parking guidelines?",
@@ -572,18 +565,22 @@ export function ProfileScreen({
                 a: "Access the \"Installation & Wiring Manuals\" tab in your profile to view and download full-color PDF bay schematic sheets and wire color codes."
               }
             ].map((faq, idx) => {
-              const isOpen = openFaqIndex === idx;
+              const isOpen = openFaqIndices.includes(idx);
               return (
                 <div 
                   key={idx}
-                  className="rounded-2xl bg-white border border-slate-200/80 shadow-2xs overflow-hidden transition-all duration-200"
+                  className="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden transition-all duration-200"
                 >
                   <button
                     type="button"
-                    onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
-                    className="w-full p-3.5 flex items-center justify-between text-left gap-3 select-none active:bg-slate-50 transition-colors cursor-pointer"
+                    onClick={() => {
+                      setOpenFaqIndices(prev =>
+                        prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+                      );
+                    }}
+                    className="w-full p-4 flex items-center justify-between text-left gap-3 select-none active:bg-slate-50 transition-colors cursor-pointer"
                   >
-                    <span className="font-bold text-slate-900 text-xs flex-1">
+                    <span className="font-bold text-slate-900 text-[12.5px] leading-snug flex-1">
                       {faq.q}
                     </span>
                     <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
@@ -593,7 +590,7 @@ export function ProfileScreen({
                     </div>
                   </button>
                   {isOpen && (
-                    <div className="px-3.5 pb-3.5 pt-1 text-[11.5px] text-slate-600 leading-relaxed border-t border-slate-100/80 animate-in fade-in duration-150">
+                    <div className="px-4 pb-4 pt-2.5 text-[12px] text-slate-600 leading-relaxed border-t border-slate-100/90 animate-in fade-in duration-150">
                       {faq.a}
                     </div>
                   )}
