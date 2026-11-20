@@ -43,6 +43,54 @@ export function SupportModal({
     }
   }, [messages, isTyping]);
 
+  // Drag and smooth horizontal scrolling handlers for preset question pills
+  const presetScrollRef = useRef<HTMLDivElement>(null);
+  const [isDraggingPreset, setIsDraggingPreset] = useState(false);
+  const [presetStartX, setPresetStartX] = useState(0);
+  const [presetScrollLeft, setPresetScrollLeft] = useState(0);
+  const [hasDraggedPreset, setHasDraggedPreset] = useState(false);
+
+  const handlePresetMouseDown = (e: React.MouseEvent) => {
+    if (!presetScrollRef.current) return;
+    setIsDraggingPreset(true);
+    setHasDraggedPreset(false);
+    setPresetStartX(e.pageX - presetScrollRef.current.offsetLeft);
+    setPresetScrollLeft(presetScrollRef.current.scrollLeft);
+  };
+
+  const handlePresetMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingPreset || !presetScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - presetScrollRef.current.offsetLeft;
+    const walk = (x - presetStartX) * 1.5;
+    if (Math.abs(walk) > 5) {
+      setHasDraggedPreset(true);
+    }
+    presetScrollRef.current.scrollLeft = presetScrollLeft - walk;
+  };
+
+  const handlePresetMouseUp = () => {
+    setIsDraggingPreset(false);
+    setTimeout(() => setHasDraggedPreset(false), 60);
+  };
+
+  // Enable mouse wheel and shift + mouse wheel horizontal scrolling
+  useEffect(() => {
+    const el = presetScrollRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (delta !== 0) {
+        e.preventDefault();
+        el.scrollLeft += delta;
+      }
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
   const predefinedPrompts = [
     "How to calibrate 180° radar?",
     "Where is the reverse wire?",
@@ -112,9 +160,6 @@ export function SupportModal({
             <h1 className="text-sm font-bold tracking-tight text-slate-900 truncate">
               Support Desk
             </h1>
-            <p className="text-[10px] text-slate-500 truncate">
-              Instant installer dispatch & warranty assistance
-            </p>
           </div>
         </div>
 
@@ -189,14 +234,25 @@ export function SupportModal({
               )}
             </div>
 
-            {/* Quick preset question pills */}
-            <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-1 shrink-0">
+            {/* Quick preset question pills with mouse drag and wheel scrolling */}
+            <div
+              ref={presetScrollRef}
+              onMouseDown={handlePresetMouseDown}
+              onMouseMove={handlePresetMouseMove}
+              onMouseUp={handlePresetMouseUp}
+              onMouseLeave={handlePresetMouseUp}
+              className="flex gap-1.5 overflow-x-auto no-scrollbar py-1 shrink-0 cursor-grab active:cursor-grabbing select-none touch-pan-x scroll-smooth"
+            >
               {predefinedPrompts.map((p, idx) => (
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => handleSend(p)}
-                  className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-semibold border border-slate-200 active:scale-95 transition cursor-pointer"
+                  onClick={() => {
+                    if (!hasDraggedPreset) {
+                      handleSend(p);
+                    }
+                  }}
+                  className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-semibold border border-slate-200 active:scale-95 transition cursor-pointer select-none"
                 >
                   {p}
                 </button>

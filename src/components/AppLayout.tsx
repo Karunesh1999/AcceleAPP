@@ -175,7 +175,7 @@ export function AppLayout() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-slate-50 text-slate-900 flex flex-col justify-between overflow-x-hidden selection:bg-[#f52538] selection:text-white font-sans">
+    <div className="relative min-h-[100dvh] w-full bg-slate-50 text-slate-900 flex flex-col justify-between overflow-x-hidden selection:bg-[#f52538] selection:text-white font-sans">
       {/* 1. Splash Screen Mode */}
       {stage === "splash" && (
         <SplashScreen

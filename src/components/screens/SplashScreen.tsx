@@ -20,7 +20,7 @@ export function SplashScreen({ onComplete, soundEnabled }: SplashScreenProps) {
 
   return (
     <main
-      className="relative flex min-h-screen h-full w-full items-center justify-center overflow-hidden bg-white text-slate-900 cursor-pointer select-none p-6"
+      className="relative flex min-h-[100dvh] h-[100dvh] max-h-[100dvh] w-full items-center justify-center overflow-hidden bg-white text-slate-900 cursor-pointer select-none p-6"
       onClick={onComplete}
       title="Tap to continue"
     >

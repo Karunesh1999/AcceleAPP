@@ -45,7 +45,7 @@ export function BottomNav({
   ];
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto grid h-[74px] max-w-[430px] grid-cols-5 border-t border-slate-200 bg-white/95 px-2 backdrop-blur-xl select-none shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+    <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto grid h-[calc(66px+env(safe-area-inset-bottom,0px))] pb-[env(safe-area-inset-bottom,0px)] pt-1 max-w-[430px] grid-cols-5 border-t border-slate-200 bg-white/95 px-2 backdrop-blur-xl select-none shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
       {tabs.map(({ id, label, icon: Icon, badge }) => {
         const selected = active === id;
         return (

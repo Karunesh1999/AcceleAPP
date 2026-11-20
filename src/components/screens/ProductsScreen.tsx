@@ -1,6 +1,14 @@
-import React, { useState, useMemo, useRef } from "react";
-import { Search, ShoppingCart, X } from "lucide-react";
-import { PRODUCTS } from "@/data/mockData";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { 
+  Search, 
+  ShoppingCart, 
+  X, 
+  SlidersHorizontal, 
+  ArrowUp, 
+  ArrowDown, 
+  RotateCcw 
+} from "lucide-react";
+import { PRODUCTS, CATEGORIES } from "@/data/mockData";
 import type { Product } from "@/types";
 import { playAlertBeep } from "@/lib/utils";
 
@@ -19,6 +27,27 @@ export function ProductsScreen({
 }: ProductsScreenProps) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [priceSort, setPriceSort] = useState<"none" | "asc" | "desc">("none");
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    }
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const categoriesList = [
     { id: "all", label: "All Products" },
@@ -68,18 +97,32 @@ export function ProductsScreen({
   };
 
   const filtered = useMemo(() => {
-    return PRODUCTS.filter((product) => {
-      const matchesSearch =
-        product.name.toLowerCase().includes(query.toLowerCase()) ||
-        product.sku.toLowerCase().includes(query.toLowerCase()) ||
-        product.description.toLowerCase().includes(query.toLowerCase());
+    let result = [...PRODUCTS];
 
-      const matchesCat =
-        selectedCategory === "all" || product.category === selectedCategory;
+    if (query.trim()) {
+      const q = query.toLowerCase().trim();
+      result = result.filter(
+        (product) =>
+          product.name.toLowerCase().includes(q) ||
+          product.sku.toLowerCase().includes(q) ||
+          product.category.toLowerCase().includes(q) ||
+          product.description.toLowerCase().includes(q) ||
+          (product.tag && product.tag.toLowerCase().includes(q))
+      );
+    }
 
-      return matchesSearch && matchesCat;
-    });
-  }, [query, selectedCategory]);
+    if (selectedCategory !== "all") {
+      result = result.filter((product) => product.category === selectedCategory);
+    }
+
+    if (priceSort === "asc") {
+      result.sort((a, b) => a.price - b.price);
+    } else if (priceSort === "desc") {
+      result.sort((a, b) => b.price - a.price);
+    }
+
+    return result;
+  }, [query, selectedCategory, priceSort]);
 
   const handleQuickAdd = (e: React.MouseEvent, product: Product) => {
     e.stopPropagation();
@@ -97,22 +140,238 @@ export function ProductsScreen({
           Find the right hardware
         </h1>
 
-        {/* Search Bar */}
-        <div className="mt-4 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus-within:border-[#f52538] transition shadow-xs">
-          <Search className="h-4 w-4 text-slate-400 shrink-0" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="min-w-0 flex-1 bg-transparent text-xs text-slate-900 placeholder:text-slate-400 outline-none"
-            placeholder="Search by model, SKU, or vehicle..."
-          />
-          {query && (
+        {/* Search Bar & Dropdown Filter Section (Matching HomeScreen) */}
+        <div className="mt-3.5 relative z-40" ref={searchContainerRef}>
+          <div
+            className={`flex items-center gap-2 rounded-2xl border bg-white px-3.5 py-2.5 text-slate-800 shadow-2xs transition-all ${
+              isDropdownOpen
+                ? "border-[#f52538] ring-2 ring-rose-500/10 shadow-md"
+                : "border-slate-200/90 hover:border-slate-300"
+            }`}
+          >
+            {/* Search / Filter Icon Button */}
             <button
-              onClick={() => setQuery("")}
-              className="text-slate-400 hover:text-slate-600"
+              type="button"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              title="Toggle filter & search dropdown"
+              aria-label="Toggle filter and sort dropdown"
+              className="grid h-8 w-8 place-items-center rounded-xl bg-rose-50 text-[#f52538] hover:bg-rose-100 active:scale-95 transition shrink-0 cursor-pointer"
             >
-              <X className="h-3.5 w-3.5" />
+              <Search className="h-4 w-4 stroke-[2.5]" />
             </button>
+
+            {/* Live Search Input */}
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                if (!isDropdownOpen) setIsDropdownOpen(true);
+              }}
+              onFocus={() => setIsDropdownOpen(true)}
+              placeholder="Search by model, SKU, or vehicle..."
+              className="min-w-0 flex-1 bg-transparent text-xs text-slate-900 placeholder:text-slate-400 font-medium outline-none"
+            />
+
+            {/* Clear Button */}
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="text-slate-400 hover:text-slate-600 p-1 shrink-0 cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+
+            {/* Filter / Sort Button */}
+            <button
+              type="button"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition shrink-0 cursor-pointer ${
+                isDropdownOpen || selectedCategory !== "all" || priceSort !== "none"
+                  ? "bg-[#f52538] text-white shadow-xs shadow-rose-500/20"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              <span>Filter</span>
+              {(selectedCategory !== "all" || priceSort !== "none") && (
+                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+              )}
+            </button>
+          </div>
+
+          {/* Dropdown Menu (Inline dropdown matching HomeScreen) */}
+          {isDropdownOpen && (
+            <div className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-slate-200/90 bg-white/98 backdrop-blur-md p-4 shadow-xl max-h-[460px] flex flex-col animate-in fade-in slide-in-from-top-2 duration-150">
+              {/* Dropdown Header */}
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold tracking-wider text-slate-900 uppercase">
+                    Sort & Filter
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9.5px] font-mono font-semibold text-slate-600">
+                    {filtered.length} items
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {(selectedCategory !== "all" || priceSort !== "none" || query) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedCategory("all");
+                        setPriceSort("none");
+                        setQuery("");
+                      }}
+                      className="flex items-center gap-1 text-[10.5px] font-semibold text-[#f52538] hover:underline cursor-pointer"
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      Reset
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-y-auto no-scrollbar py-2 space-y-3.5 flex-1">
+                {/* Price Sort Section */}
+                <div className="space-y-1.5">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Sort by Price
+                  </p>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setPriceSort("none")}
+                      className={`rounded-xl px-2 py-1.5 text-center text-[10.5px] font-semibold transition border cursor-pointer ${
+                        priceSort === "none"
+                          ? "bg-slate-900 text-white border-slate-900 shadow-2xs"
+                          : "bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100"
+                      }`}
+                    >
+                      Default
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPriceSort("asc")}
+                      className={`rounded-xl px-2 py-1.5 text-center text-[10.5px] font-semibold transition border flex items-center justify-center gap-1 cursor-pointer ${
+                        priceSort === "asc"
+                          ? "bg-[#f52538] text-white border-[#f52538] shadow-2xs shadow-rose-500/20"
+                          : "bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100"
+                      }`}
+                    >
+                      <ArrowUp className="h-3 w-3" /> Low to High
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPriceSort("desc")}
+                      className={`rounded-xl px-2 py-1.5 text-center text-[10.5px] font-semibold transition border flex items-center justify-center gap-1 cursor-pointer ${
+                        priceSort === "desc"
+                          ? "bg-[#f52538] text-white border-[#f52538] shadow-2xs shadow-rose-500/20"
+                          : "bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100"
+                      }`}
+                    >
+                      <ArrowDown className="h-3 w-3" /> High to Low
+                    </button>
+                  </div>
+                </div>
+
+                {/* Category Filter Section */}
+                <div className="space-y-1.5">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Filter by Category
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCategory("all")}
+                      className={`rounded-full px-2.5 py-1 text-[10.5px] font-semibold transition border cursor-pointer ${
+                        selectedCategory === "all"
+                          ? "bg-slate-900 text-white border-slate-900 shadow-2xs"
+                          : "bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100"
+                      }`}
+                    >
+                      All Categories
+                    </button>
+                    {CATEGORIES.map((cat) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`rounded-full px-2.5 py-1 text-[10.5px] font-semibold transition border cursor-pointer ${
+                          selectedCategory === cat.id
+                            ? "bg-[#f52538] text-white border-[#f52538] shadow-2xs shadow-rose-500/20"
+                            : "bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100"
+                        }`}
+                      >
+                        {cat.title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Hardware Products List Preview */}
+                <div className="border-t border-slate-100 pt-2">
+                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                    <span>Hardware Products ({filtered.length})</span>
+                    <span>Price</span>
+                  </div>
+                  <div className="space-y-1 max-h-48 overflow-y-auto no-scrollbar divide-y divide-slate-100">
+                    {filtered.length === 0 ? (
+                      <div className="py-6 text-center text-xs text-slate-400">
+                        <p className="font-semibold text-slate-600">No hardware found</p>
+                        <p className="text-[11px] mt-0.5">Try clearing or changing your filters</p>
+                      </div>
+                    ) : (
+                      filtered.slice(0, 20).map((prod) => (
+                        <div
+                          key={prod.id}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => {
+                            setIsDropdownOpen(false);
+                            onOpenProduct(prod);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              setIsDropdownOpen(false);
+                              onOpenProduct(prod);
+                            }
+                          }}
+                          className="flex items-center justify-between py-1.5 px-2 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left gap-2"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <img
+                              src={prod.image}
+                              alt={prod.name}
+                              className="h-8 w-8 rounded-lg object-contain bg-slate-50 p-0.5 border border-slate-200 shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-slate-900 truncate">
+                                {prod.name}
+                              </p>
+                              <span className="text-[10px] font-mono text-slate-500">
+                                {prod.sku}
+                              </span>
+                            </div>
+                          </div>
+                          <span className="text-xs font-mono font-bold text-[#f52538] shrink-0">
+                            ${prod.price.toFixed(2)}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
 

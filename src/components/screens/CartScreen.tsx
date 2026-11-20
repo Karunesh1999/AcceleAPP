@@ -296,7 +296,7 @@ export function CartScreen({
                     NET 30 INVOICING AVAILABLE
                   </p>
                 </div>
-                <span className="text-2xl font-bold text-slate-900 tracking-tight font-mono">
+                <span className="text-base font-black text-slate-900 tracking-tight font-mono">
                   ${total.toFixed(2)}
                 </span>
               </div>

@@ -671,9 +671,6 @@ export function HomeScreen({
               ADAS Radar Spotlight
             </h2>
           </div>
-          <span className="rounded-full bg-rose-50 border border-rose-200/80 px-2 py-0.5 text-[9.5px] font-bold text-[#f52538] flex items-center gap-1 uppercase tracking-wider">
-            <Flame className="w-2.5 h-2.5" /> Flagship
-          </span>
         </div>
 
         <article
@@ -681,7 +678,7 @@ export function HomeScreen({
           className="cursor-pointer overflow-hidden rounded-[24px] border border-slate-200 bg-white transition-all hover:border-slate-300 hover:shadow-md active:scale-[0.99] shadow-sm"
         >
           {/* Spotlight Video with Live HUD overlay */}
-          <div className="relative h-60 overflow-hidden bg-slate-950 group">
+          <div className="relative h-52 sm:h-60 overflow-hidden bg-slate-950 group">
             <video
               ref={videoRef}
               src={rvcVideo}
@@ -744,7 +741,7 @@ export function HomeScreen({
           </div>
 
           {/* Minimal Content Bar - lets the video be the hero focus */}
-          <div className="p-3.5 flex items-center justify-between gap-3 bg-white">
+          <div className="p-3 sm:p-3.5 flex items-center justify-between gap-2.5 bg-white">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 text-[10px] font-bold text-sky-600">
                 <Radio className="h-3 w-3 shrink-0" />
@@ -758,10 +755,10 @@ export function HomeScreen({
             <button
               onClick={handleOpenFullscreen}
               aria-label="Play video full screen"
-              className="flex items-center gap-1.5 rounded-xl bg-[#f52538] px-3.5 py-2 text-xs font-bold tracking-wider text-white shadow-xs hover:bg-[#ff3347] active:scale-95 transition shrink-0 cursor-pointer"
+              className="flex items-center gap-1.5 rounded-xl bg-[#f52538] px-3 py-2 text-[11px] sm:text-xs font-bold tracking-wider text-white shadow-xs hover:bg-[#ff3347] active:scale-95 transition shrink-0 cursor-pointer"
             >
               <Maximize2 className="h-3.5 w-3.5" />
-              <span>FULL SCREEN</span>
+              <span className="whitespace-nowrap">FULL SCREEN</span>
             </button>
           </div>
         </article>

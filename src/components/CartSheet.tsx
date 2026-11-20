@@ -223,7 +223,7 @@ export function CartSheet({
                 <span className="text-sm font-bold text-slate-900">Manifest Total</span>
                 <p className="text-[9.5px] text-[#f52538] font-bold tracking-wider">NET 30 INVOICING AVAILABLE</p>
               </div>
-              <span className="text-xl font-bold text-slate-900 tracking-tight">${total.toFixed(2)}</span>
+              <span className="text-base font-black text-slate-900 tracking-tight font-mono">${total.toFixed(2)}</span>
             </div>
           </div>
 

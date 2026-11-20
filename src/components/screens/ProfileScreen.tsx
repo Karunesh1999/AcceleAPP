@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { 
   ChevronLeft, 
+  ChevronDown,
   ShoppingBag, 
   User, 
   Check, 
@@ -25,7 +26,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { InstallationManualModal } from "@/components/InstallationManualModal";
+import { InstallationManualPage } from "@/components/InstallationManualPage";
 import { playAlertBeep } from "@/lib/utils";
 
 interface ProfileScreenProps {
@@ -50,6 +51,7 @@ export function ProfileScreen({
   onSignOut,
 }: ProfileScreenProps) {
   const [modalType, setModalType] = useState<"about" | "faq" | "privacy" | "terms" | "manuals" | null>(null);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [dealerName, setDealerName] = useState(() => {
     if (typeof window !== "undefined") {
@@ -548,40 +550,56 @@ export function ProfileScreen({
           </div>
 
           <div className="space-y-2.5">
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
-              <p className="font-bold text-slate-900 text-xs">How do I disable dynamic parking guidelines?</p>
-              <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                Locate the small green loop wire on the camera pigtail harness. Snip the loop while 12V power is disconnected, insulate both ends with heatshrink, and cycle the vehicle's ignition power.
-              </p>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
-              <p className="font-bold text-slate-900 text-xs">How does the 180° Doppler radar calibrate?</p>
-              <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                The RVC180FM Doppler sensor is factory pre-calibrated. It auto-learns road baseline and bumper height within the first 50 feet of vehicle motion above 5 mph without requiring optical calibration mats.
-              </p>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
-              <p className="font-bold text-slate-900 text-xs">What is Tier 1 wholesale pricing?</p>
-              <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                Authorized dealer accounts receive an automated 10% wholesale margin discount off standard MSRP on all commercial hardware orders, with Net 30 payment terms and prioritized same-day bay dispatch.
-              </p>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
-              <p className="font-bold text-slate-900 text-xs">What are the continuous load ratings for Beüler relays?</p>
-              <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                Standard Beüler 5-pin SPDT relays are rated for 30A/40A continuous load, and heavy-duty series (e.g. 6100-LS) support up to 60A/80A inrush with silver tin-oxide contacts.
-              </p>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
-              <p className="font-bold text-slate-900 text-xs">Where do I find vehicle-specific wiring pinouts?</p>
-              <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                Access the "Installation & Wiring Manuals" tab in your profile to view and download full-color PDF bay schematic sheets and wire color codes.
-              </p>
-            </div>
+            {[
+              {
+                q: "How do I disable dynamic parking guidelines?",
+                a: "Locate the small green loop wire on the camera pigtail harness. Snip the loop while 12V power is disconnected, insulate both ends with heatshrink, and cycle the vehicle's ignition power."
+              },
+              {
+                q: "How does the 180° Doppler radar calibrate?",
+                a: "The RVC180FM Doppler sensor is factory pre-calibrated. It auto-learns road baseline and bumper height within the first 50 feet of vehicle motion above 5 mph without requiring optical calibration mats."
+              },
+              {
+                q: "What is Tier 1 wholesale pricing?",
+                a: "Authorized dealer accounts receive an automated 10% wholesale margin discount off standard MSRP on all commercial hardware orders, with Net 30 payment terms and prioritized same-day bay dispatch."
+              },
+              {
+                q: "What are the continuous load ratings for Beüler relays?",
+                a: "Standard Beüler 5-pin SPDT relays are rated for 30A/40A continuous load, and heavy-duty series (e.g. 6100-LS) support up to 60A/80A inrush with silver tin-oxide contacts."
+              },
+              {
+                q: "Where do I find vehicle-specific wiring pinouts?",
+                a: "Access the \"Installation & Wiring Manuals\" tab in your profile to view and download full-color PDF bay schematic sheets and wire color codes."
+              }
+            ].map((faq, idx) => {
+              const isOpen = openFaqIndex === idx;
+              return (
+                <div 
+                  key={idx}
+                  className="rounded-2xl bg-white border border-slate-200/80 shadow-2xs overflow-hidden transition-all duration-200"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
+                    className="w-full p-3.5 flex items-center justify-between text-left gap-3 select-none active:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    <span className="font-bold text-slate-900 text-xs flex-1">
+                      {faq.q}
+                    </span>
+                    <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                      <ChevronDown
+                        className={`h-4 w-4 text-slate-600 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                      />
+                    </div>
+                  </button>
+                  {isOpen && (
+                    <div className="px-3.5 pb-3.5 pt-1 text-[11.5px] text-slate-600 leading-relaxed border-t border-slate-100/80 animate-in fade-in duration-150">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <Button
@@ -600,7 +618,7 @@ export function ProfileScreen({
     );
   }
 
-  // Dedicated Warranty & RMA Policy Page (Replaces dialog box)
+  // Dedicated Warranty & Return Policy Page (Replaces dialog box)
   if (modalType === "privacy") {
     return (
       <div className="min-h-full bg-slate-50 pb-28 text-slate-900 animate-in fade-in duration-200">
@@ -612,7 +630,7 @@ export function ProfileScreen({
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <h1 className="text-base font-bold text-slate-900">Warranty & RMA Policy</h1>
+          <h1 className="text-base font-bold text-slate-900">Warranty & Return Policy</h1>
           <div className="w-10" />
         </header>
 
@@ -752,6 +770,20 @@ export function ProfileScreen({
           </Button>
         </div>
       </div>
+    );
+  }
+
+  // Dedicated Bay Installation & Wiring Manuals Page (Replaces slider / bottom sheet)
+  if (modalType === "manuals") {
+    return (
+      <InstallationManualPage
+        onBack={() => setModalType(null)}
+        onContactSupport={() => {
+          setModalType(null);
+          onOpenLiveChat();
+        }}
+        soundEnabled={soundEnabled}
+      />
     );
   }
 
@@ -960,7 +992,7 @@ export function ProfileScreen({
               </div>
               <div className="min-w-0 flex-1">
                 <span className="text-xs font-bold text-slate-900">
-                  Warranty & RMA Policy
+                  Warranty & Return Policy
                 </span>
                 <p className="text-[11px] text-slate-500 mt-0.5">
                   3-Year Bay protection & advance swap
@@ -992,17 +1024,6 @@ export function ProfileScreen({
           </button>
         </div>
       </div>
-
-      {/* Installation & Wiring Manuals Hub */}
-      <InstallationManualModal
-        isOpen={modalType === "manuals"}
-        onClose={() => setModalType(null)}
-        initialCategory="cameras"
-        onContactSupport={() => {
-          setModalType(null);
-          onOpenLiveChat();
-        }}
-      />
     </div>
   );
 }

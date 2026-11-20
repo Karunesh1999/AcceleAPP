@@ -20,6 +20,13 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { 
+  Select, 
+  SelectTrigger, 
+  SelectValue, 
+  SelectContent, 
+  SelectItem 
+} from "@/components/ui/Select";
 import { PRODUCTS } from "@/data/mockData";
 import type { Product } from "@/types";
 import { playAlertBeep } from "@/lib/utils";
@@ -1082,11 +1089,11 @@ export function BookingsScreen({
       {/* Cancel Order Confirmation Modal */}
       {cancellingOrder && (
         <div 
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={() => setCancellingOrder(null)}
         >
           <div
-            className="w-full max-w-sm rounded-t-3xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xl overflow-hidden p-5 space-y-4 animate-in slide-in-from-bottom duration-200"
+            className="w-full max-w-sm rounded-3xl bg-white border border-slate-200/90 shadow-2xl p-5 space-y-4 animate-in zoom-in-95 duration-200 relative"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3">
@@ -1094,8 +1101,7 @@ export function BookingsScreen({
                 <AlertCircle className="h-5 w-5 text-rose-600" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Cancel Order {cancellingOrder.id}?</h3>
-                <p className="text-[11px] text-slate-500 font-medium">PO #{cancellingOrder.poNumber} • ${cancellingOrder.total.toFixed(2)}</p>
+                <h3 className="text-sm font-bold text-slate-900">Cancel Order?</h3>
               </div>
             </div>
 
@@ -1107,16 +1113,17 @@ export function BookingsScreen({
               <label className="text-[10px] font-bold tracking-wider uppercase text-slate-500">
                 Reason for Cancellation
               </label>
-              <select
-                value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
-                className="w-full text-xs font-semibold px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500 focus:bg-white"
-              >
-                <option value="Ordered by mistake">Ordered by mistake</option>
-                <option value="Customer installation cancelled">Customer installation cancelled</option>
-                <option value="Incorrect SKU / part model">Incorrect SKU / part model</option>
-                <option value="Dispatch delay / urgent local sourcing">Dispatch delay / urgent local sourcing</option>
-              </select>
+              <Select value={cancelReason} onValueChange={setCancelReason}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select cancellation reason" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Ordered by mistake">Ordered by mistake</SelectItem>
+                  <SelectItem value="Customer installation cancelled">Customer installation cancelled</SelectItem>
+                  <SelectItem value="Incorrect SKU / part model">Incorrect SKU / part model</SelectItem>
+                  <SelectItem value="Dispatch delay / urgent local sourcing">Dispatch delay / urgent local sourcing</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid grid-cols-2 gap-2 pt-1">
