@@ -5,7 +5,6 @@ import {
   User, 
   Check, 
   Pencil, 
-  Package, 
   Phone, 
   Info, 
   HelpCircle, 
@@ -861,33 +860,7 @@ export function ProfileScreen({
 
         {/* Menu Items Card (Clean List) */}
         <div className="rounded-3xl bg-white p-2 border border-slate-200/80 shadow-2xs space-y-0.5 divide-y divide-slate-100">
-          {/* 1. My Orders */}
-          <button
-            onClick={onOpenOrders}
-            className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition text-left"
-          >
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="h-11 w-11 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-700 shrink-0">
-                <Package className="h-5 w-5 stroke-[1.75]" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-900">
-                    My Orders
-                  </span>
-                  <span className="bg-rose-50 text-[#f52538] border border-rose-200 text-[9.5px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                    2 IN TRANSIT
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 mt-0.5 font-normal">
-                  Track shipments & POs
-                </p>
-              </div>
-            </div>
-            <ChevronRight className="h-4 w-4 text-slate-400 shrink-0 ml-2" />
-          </button>
-
-          {/* 2. Contact Technical Support */}
+          {/* 1. Contact Technical Support */}
           <button
             onClick={onOpenLiveChat}
             className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition text-left"
@@ -1016,16 +989,6 @@ export function ProfileScreen({
               </div>
             </div>
             <ChevronRight className="h-4 w-4 text-slate-400 shrink-0 ml-2" />
-          </button>
-        </div>
-
-        {/* Sign Out Button */}
-        <div className="text-center pt-2">
-          <button
-            onClick={onSignOut}
-            className="text-xs font-bold text-slate-500 hover:text-slate-800 transition"
-          >
-            Sign Out Dealer Session
           </button>
         </div>
       </div>

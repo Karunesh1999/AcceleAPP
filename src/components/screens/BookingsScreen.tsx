@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { 
-  Search, 
   Truck, 
   CheckCircle2, 
   RotateCcw, 
@@ -155,7 +154,6 @@ export function BookingsScreen({
   onAddToCart,
   soundEnabled,
 }: BookingsScreenProps) {
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "in-transit" | "completed" | "rma">("all");
   const [copiedTracking, setCopiedTracking] = useState<string | null>(null);
   const [copiedInvoice, setCopiedInvoice] = useState<string | null>(null);
@@ -199,22 +197,8 @@ export function BookingsScreen({
 
   // Filtered orders
   const filteredOrders = INITIAL_ORDERS.filter((order) => {
-    // Status filter
     if (activeFilter !== "all" && order.status !== activeFilter) {
       return false;
-    }
-    // Search query filter
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const matchId = order.id.toLowerCase().includes(q);
-      const matchPo = order.poNumber.toLowerCase().includes(q);
-      const matchTracking = order.trackingNumber.toLowerCase().includes(q);
-      const matchItem = order.items.some(
-        (it) =>
-          it.product.name.toLowerCase().includes(q) ||
-          it.product.sku.toLowerCase().includes(q)
-      );
-      return matchId || matchPo || matchTracking || matchItem;
     }
     return true;
   });
@@ -240,38 +224,12 @@ export function BookingsScreen({
 
       {/* Screen Header */}
       <section className="px-4 pt-4">
-        <p className="text-[10px] font-bold tracking-wider text-[#f52538] uppercase">
-          WHOLESALE DISPATCH & FULFILLMENT
-        </p>
-        <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900 leading-tight">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 leading-tight">
           Bookings & Orders
         </h1>
-        <p className="text-xs text-slate-600 mt-1 font-normal">
-          Real-time carrier tracking, bay deliveries, and 1-click reorders.
-        </p>
-
-        {/* Search Bar: [ 🔍 Search Orders / PO # ] */}
-        <div className="relative mt-4">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search Orders, SKUs, or PO #..."
-            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-9 text-xs text-slate-900 placeholder:text-slate-400 shadow-2xs focus:border-[#f52538] focus:outline-none"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
 
         {/* Filter Pills: [ All ] [ In-Transit (2) ] [ Completed ] [ RMA ] */}
-        <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        <div className="mt-3.5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {[
             { id: "all", label: `All (${INITIAL_ORDERS.length})` },
             { id: "in-transit", label: `In-Transit (${inTransitCount})` },
@@ -306,11 +264,10 @@ export function BookingsScreen({
             <Package className="h-10 w-10 text-slate-400 mx-auto stroke-[1.5]" />
             <p className="mt-3 text-sm font-bold text-slate-800">No matching orders found</p>
             <p className="mt-1 text-xs text-slate-500">
-              Try searching a different SKU, PO number, or clear your filter.
+              Try switching your filter above.
             </p>
             <Button
               onClick={() => {
-                setSearchQuery("");
                 setActiveFilter("all");
               }}
               variant="outline"
@@ -330,39 +287,24 @@ export function BookingsScreen({
                 key={order.id}
                 className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs hover:border-slate-300 transition-all space-y-3.5"
               >
-                {/* Order Top Bar: ORD ID, Status Badge & ETA */}
-                <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-sm font-black text-slate-900">
-                        {order.id}
-                      </span>
-                      <Badge
-                        variant={
-                          isCompleted
-                            ? "emerald"
-                            : isRMA
-                            ? "destructive"
-                            : "cyan"
-                        }
-                      >
-                        {order.statusLabel}
-                      </Badge>
-                    </div>
-                    <p className="text-[10px] font-mono text-slate-500 mt-0.5">
-                      {order.poNumber} • {order.date}
-                    </p>
-                  </div>
+                {/* Order Top Bar: Status Badge & ETA */}
+                <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                  <Badge
+                    variant={
+                      isCompleted
+                        ? "emerald"
+                        : isRMA
+                        ? "destructive"
+                        : "cyan"
+                    }
+                  >
+                    {order.statusLabel}
+                  </Badge>
 
-                  <div className="text-right">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800">
-                      <Clock className="h-3 w-3 text-amber-600 shrink-0" />
-                      {order.eta}
-                    </span>
-                    <p className="text-[9px] font-bold text-[#f52538] uppercase mt-0.5">
-                      {order.tier}
-                    </p>
-                  </div>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800">
+                    <Clock className="h-3 w-3 text-amber-600 shrink-0" />
+                    {order.eta}
+                  </span>
                 </div>
 
                 {/* Carrier & Tracking */}
@@ -454,33 +396,35 @@ export function BookingsScreen({
                     </span>
                   </div>
 
-                  {/* 3 Action Buttons: [ Track Live ] [ 1-Click Reorder ] [ PDF ] */}
-                  <div className="grid grid-cols-3 gap-2">
-                    <Button
-                      onClick={() => setTrackingModalOrder(order)}
-                      variant="outline"
-                      size="sm"
-                      className="text-[10px] font-bold text-slate-800"
-                    >
-                      <Truck className="h-3 w-3 mr-1 text-sky-600" />
-                      Track Live
-                    </Button>
-
-                    <Button
-                      onClick={(e) => handleReorder(order, e)}
-                      variant="outline"
-                      size="sm"
-                      className="text-[10px] font-bold text-slate-800 hover:text-[#f52538]"
-                    >
-                      <RotateCcw className="h-3 w-3 mr-1 text-[#f52538]" />
-                      Reorder
-                    </Button>
+                  {/* Action Buttons: Track Live for in-transit, Reorder for completed */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {!isCompleted ? (
+                      <Button
+                        onClick={() => setTrackingModalOrder(order)}
+                        variant="outline"
+                        size="sm"
+                        className="text-[10px] font-bold text-slate-800 cursor-pointer"
+                      >
+                        <Truck className="h-3 w-3 mr-1 text-sky-600" />
+                        Track Live
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={(e) => handleReorder(order, e)}
+                        variant="outline"
+                        size="sm"
+                        className="text-[10px] font-bold text-slate-800 hover:text-[#f52538] cursor-pointer"
+                      >
+                        <RotateCcw className="h-3 w-3 mr-1 text-[#f52538]" />
+                        Reorder
+                      </Button>
+                    )}
 
                     <Button
                       onClick={() => setInvoiceModalOrder(order)}
                       variant="outline"
                       size="sm"
-                      className="text-[10px] font-bold text-slate-800"
+                      className="text-[10px] font-bold text-slate-800 cursor-pointer"
                     >
                       <FileText className="h-3 w-3 mr-1 text-amber-600" />
                       PDF Invoice

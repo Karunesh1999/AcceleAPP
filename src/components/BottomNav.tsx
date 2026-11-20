@@ -47,17 +47,11 @@ export function BottomNav({
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto grid h-[74px] max-w-[430px] grid-cols-5 border-t border-slate-200 bg-white/95 px-2 backdrop-blur-xl select-none shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
       {tabs.map(({ id, label, icon: Icon, badge }) => {
-        const selected = id === "Cart" ? isCartOpen : active === id && !isCartOpen;
+        const selected = active === id;
         return (
           <button
             key={id}
-            onClick={() => {
-              if (id === "Cart") {
-                onOpenCart?.();
-              } else {
-                setActive(id);
-              }
-            }}
+            onClick={() => setActive(id)}
             className={`relative flex flex-col items-center justify-center gap-1 text-[10px] font-bold tracking-tight transition-all ${
               selected ? "text-[#f52538]" : "text-slate-500 hover:text-slate-800"
             }`}

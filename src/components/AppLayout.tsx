@@ -10,7 +10,7 @@ import { ProfileScreen } from "@/components/screens/ProfileScreen";
 import { ProductDetailView } from "@/components/ProductDetailView";
 import { Header } from "@/components/Header";
 import { BottomNav, type NavTab } from "@/components/BottomNav";
-import { CartSheet } from "@/components/CartSheet";
+import { CartScreen } from "@/components/screens/CartScreen";
 import { SupportModal } from "@/components/SupportModal";
 import { DealerProfileModal } from "@/components/DealerProfileModal";
 import { SearchModal } from "@/components/SearchModal";
@@ -63,6 +63,8 @@ export function AppLayout() {
     activeTab = "Products";
   } else if (currentPath.startsWith("/bookings") || currentPath.startsWith("/orders")) {
     activeTab = "Bookings";
+  } else if (currentPath.startsWith("/cart")) {
+    activeTab = "Cart";
   } else if (currentPath.startsWith("/profile") || currentPath.startsWith("/support")) {
     activeTab = "Profile";
   }
@@ -102,7 +104,6 @@ export function AppLayout() {
   }, [cartItems]);
 
   // Modals state
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -153,10 +154,6 @@ export function AppLayout() {
   };
 
   const handleTabChange = (tab: NavTab) => {
-    if (tab === "Cart") {
-      setIsCartOpen(true);
-      return;
-    }
     switch (tab) {
       case "Home":
         navigate("/");
@@ -166,6 +163,9 @@ export function AppLayout() {
         break;
       case "Bookings":
         navigate("/bookings");
+        break;
+      case "Cart":
+        navigate("/cart");
         break;
       case "Profile":
         navigate("/profile");
@@ -242,10 +242,23 @@ export function AppLayout() {
                   />
                 )}
 
+                {activeTab === "Cart" && (
+                  <CartScreen
+                    items={cartItems}
+                    onUpdateQuantity={handleUpdateQuantity}
+                    onRemoveItem={handleRemoveFromCart}
+                    onClearCart={handleClearCart}
+                    soundEnabled={soundEnabled}
+                    onNavigateToProducts={() => navigate("/products")}
+                    onNavigateToOrders={() => navigate("/bookings")}
+                    onOpenProduct={(prod) => navigate(`/product/${prod.sku}`)}
+                  />
+                )}
+
                 {activeTab === "Profile" && (
                   <ProfileScreen
                     onBack={() => navigate("/")}
-                    onOpenCart={() => setIsCartOpen(true)}
+                    onOpenCart={() => navigate("/cart")}
                     cartCount={totalCartCount}
                     onOpenLiveChat={() => setIsSupportModalOpen(true)}
                     onOpenOrders={() => navigate("/bookings")}
@@ -262,8 +275,7 @@ export function AppLayout() {
                 setActive={handleTabChange} 
                 activeOrderCount={2}
                 cartCount={totalCartCount}
-                isCartOpen={isCartOpen}
-                onOpenCart={() => setIsCartOpen(true)}
+                onOpenCart={() => navigate("/cart")}
               />
             </>
           )}
@@ -281,17 +293,6 @@ export function AppLayout() {
               </button>
             </div>
           )}
-
-          {/* Cart Sheet Modal */}
-          <CartSheet
-            isOpen={isCartOpen}
-            onClose={() => setIsCartOpen(false)}
-            items={cartItems}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemoveItem={handleRemoveFromCart}
-            onClearCart={handleClearCart}
-            soundEnabled={soundEnabled}
-          />
 
           {/* Bay Support Modal */}
           <SupportModal
