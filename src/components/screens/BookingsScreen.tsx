@@ -15,7 +15,8 @@ import {
   Receipt,
   Download,
   ShieldCheck,
-  Building2
+  Building2,
+  XCircle
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -32,7 +33,7 @@ export interface OrderItem {
 export interface BookingOrder {
   id: string;
   poNumber: string;
-  status: "in-transit" | "completed";
+  status: "in-transit" | "completed" | "cancelled";
   statusLabel: string;
   carrier: string;
   trackingNumber: string;
@@ -174,6 +175,9 @@ export function BookingsScreen({
   soundEnabled,
 }: BookingsScreenProps) {
   const [activeFilter, setActiveFilter] = useState<"all" | "in-transit" | "completed" | "returns">("all");
+  const [orders, setOrders] = useState<BookingOrder[]>(INITIAL_ORDERS);
+  const [cancellingOrder, setCancellingOrder] = useState<BookingOrder | null>(null);
+  const [cancelReason, setCancelReason] = useState<string>("Ordered by mistake");
   const [returnList] = useState<ReturnOrder[]>(INITIAL_RETURNS);
   const [copiedTracking, setCopiedTracking] = useState<string | null>(null);
   const [copiedInvoice, setCopiedInvoice] = useState<string | null>(null);
@@ -289,16 +293,35 @@ export function BookingsScreen({
     });
   };
 
+  const handleConfirmCancel = () => {
+    if (!cancellingOrder) return;
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.id === cancellingOrder.id
+          ? {
+              ...o,
+              status: "cancelled" as const,
+              statusLabel: "Cancelled",
+              eta: "Order Cancelled",
+            }
+          : o
+      )
+    );
+    if (soundEnabled) playAlertBeep("click");
+    showToast(`Order ${cancellingOrder.id} cancelled. Credit refunded to account.`);
+    setCancellingOrder(null);
+  };
+
   // Filtered orders
-  const filteredOrders = INITIAL_ORDERS.filter((order) => {
+  const filteredOrders = orders.filter((order) => {
     if (activeFilter !== "all" && order.status !== activeFilter) {
       return false;
     }
     return true;
   });
 
-  const inTransitCount = INITIAL_ORDERS.filter((o) => o.status === "in-transit").length;
-  const completedCount = INITIAL_ORDERS.filter((o) => o.status === "completed").length;
+  const inTransitCount = orders.filter((o) => o.status === "in-transit").length;
+  const completedCount = orders.filter((o) => o.status === "completed").length;
   const returnsCount = returnList.length;
 
   return (
@@ -325,7 +348,7 @@ export function BookingsScreen({
         {/* Filter Pills: [ All ] [ In-Transit ] [ Completed ] [ Returns ] */}
         <div className="mt-3.5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {[
-            { id: "all", label: `All (${INITIAL_ORDERS.length})` },
+            { id: "all", label: `All (${orders.length})` },
             { id: "in-transit", label: `In-Transit (${inTransitCount})` },
             { id: "completed", label: `Completed (${completedCount})` },
             { id: "returns", label: `Returns (${returnsCount})` },
@@ -494,6 +517,7 @@ export function BookingsScreen({
         ) : (
           filteredOrders.map((order) => {
             const isCompleted = order.status === "completed";
+            const isCancelled = order.status === "cancelled";
 
             return (
               <div
@@ -502,7 +526,7 @@ export function BookingsScreen({
               >
                 {/* Order Top Bar: Status Badge & ETA */}
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                  <Badge variant={isCompleted ? "emerald" : "cyan"}>
+                  <Badge variant={isCompleted ? "emerald" : isCancelled ? "secondary" : "cyan"}>
                     {order.statusLabel}
                   </Badge>
 
@@ -546,10 +570,14 @@ export function BookingsScreen({
                   <div className="relative h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
-                        isCompleted ? "bg-emerald-500" : "bg-sky-500"
+                        isCompleted
+                          ? "bg-emerald-500"
+                          : isCancelled
+                          ? "bg-slate-300"
+                          : "bg-sky-500"
                       }`}
                       style={{
-                        width: `${(order.currentStep / order.steps.length) * 100}%`,
+                        width: isCancelled ? "100%" : `${(order.currentStep / order.steps.length) * 100}%`,
                       }}
                     />
                   </div>
@@ -597,39 +625,51 @@ export function BookingsScreen({
                     </span>
                   </div>
 
-                  {/* Action Buttons: Track Live for in-transit, Reorder for completed */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {!isCompleted ? (
+                  {/* Action Buttons: Track Live / Reorder / Invoice & Cancel option */}
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      {!isCompleted && !isCancelled ? (
+                        <Button
+                          onClick={() => setTrackingModalOrder(order)}
+                          variant="outline"
+                          size="sm"
+                          className="text-[10px] font-bold text-slate-800 cursor-pointer"
+                        >
+                          <Truck className="h-3 w-3 mr-1 text-sky-600" />
+                          Track Live
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={(e) => handleReorder(order, e)}
+                          variant="outline"
+                          size="sm"
+                          className="text-[10px] font-bold text-slate-800 hover:text-[#f52538] cursor-pointer"
+                        >
+                          <RotateCcw className="h-3 w-3 mr-1 text-[#f52538]" />
+                          Reorder
+                        </Button>
+                      )}
+
                       <Button
-                        onClick={() => setTrackingModalOrder(order)}
+                        onClick={() => setInvoiceModalOrder(order)}
                         variant="outline"
                         size="sm"
                         className="text-[10px] font-bold text-slate-800 cursor-pointer"
                       >
-                        <Truck className="h-3 w-3 mr-1 text-sky-600" />
-                        Track Live
+                        <FileText className="h-3 w-3 mr-1 text-amber-600" />
+                        PDF Invoice
                       </Button>
-                    ) : (
-                      <Button
-                        onClick={(e) => handleReorder(order, e)}
-                        variant="outline"
-                        size="sm"
-                        className="text-[10px] font-bold text-slate-800 hover:text-[#f52538] cursor-pointer"
-                      >
-                        <RotateCcw className="h-3 w-3 mr-1 text-[#f52538]" />
-                        Reorder
-                      </Button>
-                    )}
+                    </div>
 
-                    <Button
-                      onClick={() => setInvoiceModalOrder(order)}
-                      variant="outline"
-                      size="sm"
-                      className="text-[10px] font-bold text-slate-800 cursor-pointer"
-                    >
-                      <FileText className="h-3 w-3 mr-1 text-amber-600" />
-                      PDF Invoice
-                    </Button>
+                    {!isCompleted && !isCancelled && (
+                      <button
+                        onClick={() => setCancellingOrder(order)}
+                        className="w-full py-1.5 rounded-xl border border-rose-200/90 bg-rose-50/50 hover:bg-rose-100/70 text-[10.5px] font-bold text-rose-600 active:scale-98 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <XCircle className="h-3.5 w-3.5 text-rose-500" />
+                        Cancel Order
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1034,6 +1074,68 @@ export function BookingsScreen({
                   Close Invoice
                 </Button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Order Confirmation Modal */}
+      {cancellingOrder && (
+        <div 
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={() => setCancellingOrder(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-t-3xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xl overflow-hidden p-5 space-y-4 animate-in slide-in-from-bottom duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-rose-50 border border-rose-200/80 flex items-center justify-center shrink-0">
+                <AlertCircle className="h-5 w-5 text-rose-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">Cancel Order {cancellingOrder.id}?</h3>
+                <p className="text-[11px] text-slate-500 font-medium">PO #{cancellingOrder.poNumber} • ${cancellingOrder.total.toFixed(2)}</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Are you sure you want to cancel this order? This will void the dispatch process and refund your account credit line immediately.
+            </p>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold tracking-wider uppercase text-slate-500">
+                Reason for Cancellation
+              </label>
+              <select
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className="w-full text-xs font-semibold px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500 focus:bg-white"
+              >
+                <option value="Ordered by mistake">Ordered by mistake</option>
+                <option value="Customer installation cancelled">Customer installation cancelled</option>
+                <option value="Incorrect SKU / part model">Incorrect SKU / part model</option>
+                <option value="Dispatch delay / urgent local sourcing">Dispatch delay / urgent local sourcing</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <Button
+                onClick={() => setCancellingOrder(null)}
+                variant="outline"
+                size="sm"
+                className="text-xs font-bold rounded-xl cursor-pointer"
+              >
+                Keep Order
+              </Button>
+              <Button
+                onClick={handleConfirmCancel}
+                variant="destructive"
+                size="sm"
+                className="text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-700 text-white cursor-pointer"
+              >
+                Confirm Cancel
+              </Button>
             </div>
           </div>
         </div>
