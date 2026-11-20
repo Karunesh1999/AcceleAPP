@@ -25,6 +25,8 @@ import {
   Truck,
   RotateCcw,
   Clock,
+  CreditCard,
+  Download,
   ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -816,50 +818,140 @@ export function ProfileScreen({
         </header>
 
         <div className="p-4 space-y-4">
+          {/* Account Status Card */}
           <div className="rounded-3xl bg-white p-4.5 border border-slate-200/80 shadow-2xs space-y-3">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
               <div>
-                <h3 className="text-xs font-bold text-slate-900">Wholesale Commercial Terms</h3>
-                <p className="text-[10px] text-slate-500">Net 30 Commercial Account Agreement</p>
+                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Commercial Account Status</h3>
+                <p className="text-[10px] text-slate-500">Net 30 Wholesale Agreement</p>
               </div>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                Active Tier 1
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                <CheckCircle2 className="h-3 w-3" /> Active Tier 1
               </span>
             </div>
 
-            <div className="space-y-2.5 text-xs text-slate-600 leading-relaxed">
-              <p>
-                Authorized dealers in Tier 1 status are granted Net 30 wholesale credit terms. Invoices are generated at the time of bay dispatch and are payable within 30 days via ACH, wire, or commercial credit card.
-              </p>
-              <p>
-                All wholesale purchases are strictly intended for professional installation bay integration, fleet outfitting, or authorized dealership resale.
-              </p>
+            {/* Quick Metrics */}
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="bg-slate-50 rounded-2xl p-2 border border-slate-100">
+                <p className="text-[11px] font-black text-slate-900">$25,000</p>
+                <p className="text-[9.5px] text-slate-500 font-medium">Credit Limit</p>
+              </div>
+              <div className="bg-slate-50 rounded-2xl p-2 border border-slate-100">
+                <p className="text-[11px] font-black text-emerald-600">Net 30</p>
+                <p className="text-[9.5px] text-slate-500 font-medium">Payment Terms</p>
+              </div>
+              <div className="bg-slate-50 rounded-2xl p-2 border border-slate-100">
+                <p className="text-[11px] font-black text-[#f52538]">10% Off</p>
+                <p className="text-[9.5px] text-slate-500 font-medium">Wholesale MSRP</p>
+              </div>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-mono text-slate-700 space-y-1">
-              <div className="flex justify-between">
+            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 text-[11px] font-mono text-slate-700 space-y-1.5">
+              <div className="flex justify-between items-center">
                 <span className="text-slate-500">Account:</span>
                 <span className="font-bold text-slate-900">ACC-8910-US (Apex 12V Autoworks)</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Credit Line:</span>
-                <span className="font-bold text-emerald-600">$25,000 Net 30</span>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Credit Facility:</span>
+                <span className="font-bold text-emerald-600">Approved Commercial Line</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Tax Resale Exemption:</span>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Resale Tax ID:</span>
                 <span className="font-bold text-slate-900">Verified (AZ-9948210-W)</span>
               </div>
             </div>
           </div>
 
-          <Button
-            onClick={() => setModalType(null)}
-            variant="outline"
-            size="sm"
-            className="w-full py-2.5 text-xs font-bold rounded-2xl text-slate-700 hover:text-slate-900 cursor-pointer"
-          >
-            Back to Profile
-          </Button>
+          {/* Payment & Invoicing Terms */}
+          <div className="rounded-3xl bg-white p-4.5 border border-slate-200/80 shadow-2xs space-y-3">
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <CreditCard className="h-3.5 w-3.5 text-sky-600" /> Payment & Billing Clauses
+            </h3>
+
+            <div className="space-y-2 text-[11px] text-slate-600 leading-relaxed">
+              <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-0.5">
+                <p className="font-bold text-slate-900 text-xs">Net 30 Remittance</p>
+                <p className="text-slate-500 text-[11px]">
+                  Invoices are payable within 30 days from bay dispatch date via automated ACH transfer, company check, or bank wire.
+                </p>
+              </div>
+
+              <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-0.5">
+                <p className="font-bold text-slate-900 text-xs">Prompt Payment Credit Protection</p>
+                <p className="text-slate-500 text-[11px]">
+                  Accounts in good standing retain ongoing Tier 1 wholesale pricing and prioritized same-day bay order allocation.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Professional Resale & Authorized Integration */}
+          <div className="rounded-3xl bg-white p-4.5 border border-slate-200/80 shadow-2xs space-y-3">
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> Commercial Resale Policy
+            </h3>
+
+            <div className="space-y-2 text-[11px] text-slate-600 leading-relaxed">
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>Bay & Fleet Integration:</strong> Hardware is strictly intended for professional installation bays, commercial fleet upfitting, and dealership service centers.</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>MAP Policy Adherence:</strong> Authorized dealers agree to maintain minimum advertised pricing to protect commercial dealer margins.</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>California Tech Support:</strong> Direct access to California Master Technicians for harness schematics and calibration guidance.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Freight & Dispatch SLA */}
+          <div className="rounded-3xl bg-white p-4.5 border border-slate-200/80 shadow-2xs space-y-2.5">
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <Truck className="h-3.5 w-3.5 text-[#f52538]" /> Bay Dispatch SLA
+            </h3>
+
+            <div className="space-y-1.5 text-[11px] text-slate-600 leading-relaxed">
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Same-Day Cutoff:</span>
+                <span className="font-bold text-slate-900">2:00 PM PST (Cerritos Bay)</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Freight Allowance:</span>
+                <span className="font-bold text-emerald-600">Free Ground on Orders $500+</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Damaged in Transit:</span>
+                <span className="font-bold text-slate-900">48-Hour Cross-Ship Guarantee</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-2 pt-1">
+            <Button
+              onClick={() => {
+                setModalType(null);
+                onOpenLiveChat();
+              }}
+              variant="default"
+              size="lg"
+              className="w-full py-3.5 text-xs font-bold rounded-2xl shadow-sm cursor-pointer flex items-center justify-center gap-2"
+            >
+              <HelpCircle className="h-4 w-4" /> Contact Commercial Bay Desk
+            </Button>
+
+            <Button
+              onClick={() => setModalType(null)}
+              variant="outline"
+              size="sm"
+              className="w-full py-2.5 text-xs font-bold rounded-2xl text-slate-700 hover:text-slate-900 cursor-pointer"
+            >
+              Back to Profile
+            </Button>
+          </div>
         </div>
       </div>
     );
