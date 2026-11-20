@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Headphones } from "lucide-react";
 import { SplashScreen } from "@/components/screens/SplashScreen";
 import { OnboardingScreen } from "@/components/screens/OnboardingScreen";
 import { HomeScreen } from "@/components/screens/HomeScreen";
@@ -265,6 +266,20 @@ export function AppLayout() {
                 onOpenCart={() => setIsCartOpen(true)}
               />
             </>
+          )}
+
+          {/* Floating Installer Support Chat Bot (Visible across all app pages, stays visible without scrolling) */}
+          {!isSupportModalOpen && (
+            <div className="fixed bottom-[86px] inset-x-0 z-40 mx-auto flex max-w-[430px] justify-end px-4 pointer-events-none animate-in fade-in duration-200">
+              <button
+                type="button"
+                onClick={() => setIsSupportModalOpen(true)}
+                aria-label="Direct installer support chat bot"
+                className="pointer-events-auto grid h-12 w-12 place-items-center rounded-full bg-slate-900 text-white shadow-xl shadow-slate-900/35 border border-slate-700/80 hover:bg-[#f52538] hover:border-[#f52538] hover:shadow-rose-500/35 active:scale-90 transition-all duration-200 cursor-pointer"
+              >
+                <Headphones className="h-5 w-5" />
+              </button>
+            </div>
           )}
 
           {/* Cart Sheet Modal */}

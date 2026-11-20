@@ -767,6 +767,56 @@ export function HomeScreen({
         </article>
       </section>
 
+      {/* Brand Portfolio Showcase (3-Column High-Contrast Showcase) */}
+      <section className="space-y-2.5 px-4 py-1">
+        <div className="flex items-center gap-2 px-1">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#f52538]" />
+          <h2 className="text-xs font-bold tracking-wider text-slate-900 uppercase">
+            My Brands
+          </h2>
+        </div>
+
+        {/* Soft Contrasting Showcase Container with Elevated White Tiles */}
+        <div className="rounded-3xl bg-slate-100/90 border border-slate-200/90 p-3 shadow-2xs">
+          <div className="grid grid-cols-3 gap-2.5 select-none pointer-events-none">
+            {PARTNER_BRANDS.map((brand) => {
+              const isWide = [
+                "littworks",
+                "accentmobile",
+                "usapro",
+                "accelecustom",
+                "accelevision",
+              ].includes(brand.id);
+
+              return (
+                <div
+                  key={brand.id}
+                  className="flex items-center justify-center h-20 rounded-2xl bg-white border border-slate-200/90 p-3 shadow-2xs"
+                >
+                  <img
+                    src={brand.logo}
+                    alt={brand.name}
+                    className={`max-h-11 max-w-[90%] object-contain filter contrast-125 select-none ${
+                      isWide ? "scale-125" : "scale-100"
+                    }`}
+                    loading="lazy"
+                    draggable={false}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Embedded Live Radar HUD Interactive Tester */}
+      <section className="px-4">
+        <LiveRadarSimulator
+          soundEnabled={soundEnabled}
+          onExploreProduct={() => onOpenProduct(flagshipProduct)}
+        />
+      </section>
+
       {/* Why This Platform Section (Direct Clean Cards, No Outer Card Wrapper) */}
       <section className="px-4 space-y-2.5">
         <div className="flex items-center gap-2 px-1">
@@ -841,117 +891,6 @@ export function HomeScreen({
             <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
           </div>
         </div>
-      </section>
-
-      {/* Embedded Live Radar HUD Interactive Tester */}
-      <section className="px-4">
-        <LiveRadarSimulator
-          soundEnabled={soundEnabled}
-          onExploreProduct={() => onOpenProduct(flagshipProduct)}
-        />
-      </section>
-
-      {/* Brand Portfolio & Industry Partners Section */}
-      <section className="px-4 space-y-2.5">
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#f52538]" />
-            <h2 className="text-xs font-bold tracking-wider text-slate-900 uppercase">
-              Our Brands & Manufacturing Divisions
-            </h2>
-          </div>
-          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">
-            9 Divisions
-          </span>
-        </div>
-
-        {/* Horizontal scrollable brand cards */}
-        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 scroll-smooth">
-          {PARTNER_BRANDS.map((brand) => (
-            <div
-              key={brand.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => onSelectCategory(brand.category)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  onSelectCategory(brand.category);
-                }
-              }}
-              className="flex-shrink-0 w-44 rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-2xs hover:border-[#f52538]/50 hover:shadow-xs active:scale-[0.98] transition cursor-pointer flex flex-col justify-between group"
-            >
-              <div className="h-14 w-full flex items-center justify-center p-2 rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-rose-50/40 group-hover:border-rose-100 transition">
-                <img
-                  src={brand.logo}
-                  alt={brand.name}
-                  className="max-h-10 max-w-full object-contain filter contrast-125 group-hover:scale-105 transition"
-                  loading="lazy"
-                />
-              </div>
-              <div className="mt-2.5">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-900 tracking-tight group-hover:text-[#f52538] transition">
-                    {brand.name}
-                  </h4>
-                  <span className="text-[9px] font-mono text-[#f52538] font-bold bg-rose-50 border border-rose-200/80 px-1.5 py-0.5 rounded-md">
-                    12V
-                  </span>
-                </div>
-                <p className="text-[10.5px] text-slate-500 line-clamp-1 mt-0.5 font-medium">
-                  {brand.tagline}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Industry Associations & ISO Bar */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-3 shadow-2xs flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="grid h-8 w-8 place-items-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 shrink-0">
-              <ShieldCheck className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[11px] font-bold text-slate-900 truncate">
-                ISO 9001:2015 Certified Manufacturing
-              </p>
-              <p className="text-[10px] text-slate-500 truncate">
-                Official SEMA Member & MEA Industry Partner
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span className="rounded-lg bg-slate-100 border border-slate-200 px-2 py-0.5 text-[9px] font-mono font-bold text-slate-700">
-              SEMA
-            </span>
-            <span className="rounded-lg bg-slate-100 border border-slate-200 px-2 py-0.5 text-[9px] font-mono font-bold text-slate-700">
-              MEA
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* Direct Installer Support Card */}
-      <section className="px-4">
-        <button
-          onClick={onOpenSupport}
-          className="w-full flex items-center gap-4 rounded-2xl border border-sky-200 bg-sky-50/70 p-4 text-left transition hover:bg-sky-50 active:scale-[0.99] shadow-2xs"
-        >
-          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-sky-100 text-sky-700">
-            <Headphones className="h-6 w-6" />
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-slate-900">
-              Direct installer support
-            </p>
-            <p className="mt-0.5 text-xs text-slate-600">
-              Talk to a certified master technician in the bay
-            </p>
-          </div>
-
-          <ChevronRight className="h-5 w-5 text-slate-500 shrink-0" />
-        </button>
       </section>
 
       {/* Full Screen Cinematic Video Player Overlay */}

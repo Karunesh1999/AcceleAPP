@@ -12,7 +12,11 @@ import {
   Package, 
   ChevronRight, 
   AlertCircle,
-  X
+  X,
+  Receipt,
+  Download,
+  ShieldCheck,
+  Building2
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -154,6 +158,7 @@ export function BookingsScreen({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "in-transit" | "completed" | "rma">("all");
   const [copiedTracking, setCopiedTracking] = useState<string | null>(null);
+  const [copiedInvoice, setCopiedInvoice] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [trackingModalOrder, setTrackingModalOrder] = useState<BookingOrder | null>(null);
   const [invoiceModalOrder, setInvoiceModalOrder] = useState<BookingOrder | null>(null);
@@ -170,6 +175,15 @@ export function BookingsScreen({
     if (soundEnabled) playAlertBeep("click");
     showToast("Tracking number copied to clipboard!");
     setTimeout(() => setCopiedTracking(null), 2000);
+  };
+
+  const handleCopyInvoice = (inv: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard?.writeText(inv);
+    setCopiedInvoice(inv);
+    if (soundEnabled) playAlertBeep("click");
+    showToast("Invoice number copied!");
+    setTimeout(() => setCopiedInvoice(null), 2000);
   };
 
   const handleReorder = (order: BookingOrder, e: React.MouseEvent) => {
@@ -479,185 +493,412 @@ export function BookingsScreen({
         )}
       </section>
 
-      {/* Live Tracking Journey Modal */}
+      {/* Live Tracking Journey Bottom Sheet (Native Mobile Drawer) */}
       {trackingModalOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 border border-slate-200 shadow-2xl text-slate-900 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="text-sm font-black text-slate-900">
-                  Live Dispatch Journey
-                </h3>
-                <p className="text-[10px] font-mono text-slate-500">
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          {/* Backdrop with blur */}
+          <div
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            onClick={() => setTrackingModalOrder(null)}
+          />
+
+          {/* Drawer Panel */}
+          <div className="relative z-50 w-full max-w-[430px] max-h-[90dvh] flex flex-col rounded-t-[32px] border-t border-slate-200 bg-white text-slate-900 shadow-[0_-12px_40px_rgba(0,0,0,0.18)] animate-in slide-in-from-bottom duration-300">
+            {/* Grab Handle */}
+            <div className="flex justify-center pt-3 pb-1 cursor-grab">
+              <div className="h-1.5 w-12 rounded-full bg-slate-300" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                    Live Dispatch Journey
+                  </h3>
+                </div>
+                <p className="text-[10.5px] font-mono text-slate-500 mt-0.5">
                   {trackingModalOrder.id} • {trackingModalOrder.carrier}
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setTrackingModalOrder(null)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"
+                className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 active:scale-95 transition cursor-pointer"
+                aria-label="Close"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Carrier Status Banner */}
-            <div className="p-3 bg-sky-50 rounded-xl border border-sky-100 flex items-center justify-between">
-              <div>
-                <p className="text-[11px] font-bold text-sky-950">
-                  {trackingModalOrder.eta}
-                </p>
-                <p className="text-[10px] text-sky-700 font-mono mt-0.5">
-                  Track #: {trackingModalOrder.trackingNumber}
-                </p>
-              </div>
-              <Badge variant="cyan">IN TRANSIT</Badge>
-            </div>
+            {/* Scrollable Sheet Content */}
+            <div className="overflow-y-auto no-scrollbar p-5 space-y-4">
+              {/* Visual Transit Map Simulation Card - Clean Light Theme */}
+              <div className="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-4 text-slate-900 shadow-2xs space-y-3">
+                <div className="flex items-center justify-end">
+                  <span className="text-[10.5px] font-mono text-slate-600 font-bold">
+                    Est. {trackingModalOrder.eta}
+                  </span>
+                </div>
 
-            {/* Step-by-Step Waypoints */}
-            <div className="space-y-3.5 pl-2">
-              {trackingModalOrder.steps.map((st, i) => {
-                const isPassed = i + 1 <= trackingModalOrder.currentStep;
-                const isCurrent = i + 1 === trackingModalOrder.currentStep;
-
-                return (
-                  <div key={i} className="flex items-start gap-3 relative">
-                    {/* Vertical connecting line */}
-                    {i < trackingModalOrder.steps.length - 1 && (
-                      <div
-                        className={`absolute left-[9px] top-4 w-[2px] h-7 ${
-                          i + 1 < trackingModalOrder.currentStep
-                            ? "bg-emerald-500"
-                            : "bg-slate-200"
-                        }`}
-                      />
-                    )}
-                    <div
-                      className={`h-5 w-5 rounded-full grid place-items-center text-[10px] font-bold z-10 shrink-0 ${
-                        isCurrent
-                          ? "bg-[#f52538] text-white ring-4 ring-rose-100"
-                          : isPassed
-                          ? "bg-emerald-500 text-white"
-                          : "bg-slate-200 text-slate-500"
-                      }`}
-                    >
-                      {isPassed ? <Check className="h-3 w-3" /> : i + 1}
-                    </div>
-                    <div>
-                      <p
-                        className={`text-xs ${
-                          isCurrent
-                            ? "font-black text-slate-900"
-                            : isPassed
-                            ? "font-bold text-slate-800"
-                            : "text-slate-400"
-                        }`}
-                      >
-                        {st}
-                      </p>
-                      <p className="text-[10px] text-slate-500">
-                        {isPassed
-                          ? i === 0
-                            ? "Nov 17, 08:30 AM (Cerritos, CA Hub)"
-                            : i === 1
-                            ? "Nov 17, 11:45 AM (Quality Tested)"
-                            : "Nov 17, 02:15 PM (Bay Route Dispatch)"
-                          : "Estimated waypoint"}
-                      </p>
-                    </div>
+                {/* Route Flow Graphic */}
+                <div className="flex items-center justify-between pt-1 relative">
+                  {/* Origin */}
+                  <div className="text-left">
+                    <p className="text-[9.5px] text-slate-400 uppercase font-mono">Origin</p>
+                    <p className="text-xs font-bold text-slate-900">Cerritos, CA</p>
+                    <p className="text-[9.5px] text-slate-500 font-mono">Accele Bay Hub</p>
                   </div>
-                );
-              })}
-            </div>
 
-            <Button
-              onClick={() => setTrackingModalOrder(null)}
-              variant="default"
-              size="sm"
-              className="w-full text-xs font-bold"
-            >
-              Close Dispatch Tracker
-            </Button>
+                  {/* Animated Middle Path */}
+                  <div className="flex-1 mx-3 flex flex-col items-center">
+                    <div className="w-full flex items-center relative">
+                      <div className="w-full h-1 bg-slate-200 relative overflow-hidden rounded-full">
+                        <div className="absolute inset-y-0 left-0 w-3/4 bg-emerald-500 rounded-full" />
+                      </div>
+                      <div className="absolute left-2/3 -translate-x-1/2 -top-2.5 grid h-6 w-6 place-items-center rounded-full bg-[#f52538] text-white shadow-xs ring-2 ring-white animate-pulse">
+                        <Truck className="h-3 w-3" />
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-mono text-emerald-700 font-bold mt-2.5">
+                      In-Transit • Route 10E
+                    </span>
+                  </div>
+
+                  {/* Destination */}
+                  <div className="text-right">
+                    <p className="text-[9.5px] text-slate-400 uppercase font-mono">Destination</p>
+                    <p className="text-xs font-bold text-slate-900">Phoenix, AZ</p>
+                    <p className="text-[9.5px] text-slate-500 font-mono">Apex 12V Bay #4</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ETA & Tracking Info Bar */}
+              <div className="p-3.5 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] font-bold text-sky-950 flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-sky-700" />
+                    Expected Delivery: {trackingModalOrder.eta}
+                  </p>
+                  <p className="text-[10px] text-sky-700 font-mono mt-1">
+                    Tracking: {trackingModalOrder.trackingNumber}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(trackingModalOrder.trackingNumber);
+                    setCopiedTracking(trackingModalOrder.id);
+                    if (soundEnabled) playAlertBeep("click");
+                    showToast(`Copied ${trackingModalOrder.carrier} tracking number!`);
+                    setTimeout(() => setCopiedTracking(null), 2000);
+                  }}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-sky-200 text-[10px] font-bold text-sky-800 hover:bg-sky-100 active:scale-95 transition shadow-2xs cursor-pointer shrink-0"
+                >
+                  {copiedTracking === trackingModalOrder.id ? (
+                    <>
+                      <Check className="h-3 w-3 text-emerald-600" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3 w-3 text-sky-600" />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Step-by-Step Waypoints Timeline */}
+              <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3.5">
+                <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                  Shipment Checkpoints
+                </p>
+                <div className="space-y-4 pl-1">
+                  {trackingModalOrder.steps.map((st, i) => {
+                    const isPassed = i + 1 <= trackingModalOrder.currentStep;
+                    const isCurrent = i + 1 === trackingModalOrder.currentStep;
+
+                    return (
+                      <div key={i} className="flex items-start gap-3.5 relative">
+                        {/* Connecting Line */}
+                        {i < trackingModalOrder.steps.length - 1 && (
+                          <div
+                            className={`absolute left-[11px] top-6 w-[2px] h-9 ${
+                              i + 1 < trackingModalOrder.currentStep
+                                ? "bg-emerald-500"
+                                : "bg-slate-200"
+                            }`}
+                          />
+                        )}
+
+                        {/* Status Icon */}
+                        <div
+                          className={`h-6 w-6 rounded-full grid place-items-center text-xs font-bold z-10 shrink-0 transition ${
+                            isCurrent
+                              ? "bg-[#f52538] text-white ring-4 ring-rose-100 shadow-xs"
+                              : isPassed
+                              ? "bg-emerald-500 text-white shadow-xs"
+                              : "bg-slate-100 text-slate-400 border border-slate-200"
+                          }`}
+                        >
+                          {isPassed ? (
+                            <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                          ) : (
+                            <span>{i + 1}</span>
+                          )}
+                        </div>
+
+                        {/* Waypoint Text */}
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className={`text-xs ${
+                              isCurrent
+                                ? "font-black text-slate-900"
+                                : isPassed
+                                ? "font-bold text-slate-800"
+                                : "text-slate-400"
+                            }`}
+                          >
+                            {st}
+                          </p>
+                          <p className="text-[10.5px] text-slate-500 mt-0.5">
+                            {isPassed
+                              ? i === 0
+                                ? "Nov 17, 08:30 AM • Cerritos, CA Distribution Hub"
+                                : i === 1
+                                ? "Nov 17, 11:45 AM • Bench Tested & Sealed"
+                                : "Nov 17, 02:15 PM • Bay Route Dispatch Vehicle"
+                              : "Estimated checkpoint upon arrival"}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Direct Carrier & Dispatcher Contact Bar */}
+              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-8 w-8 rounded-xl bg-slate-200 grid place-items-center text-slate-700 shrink-0">
+                    <Truck className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-900">UPS Priority Bay Delivery</p>
+                    <p className="text-[10px] text-slate-500">Commercial Signature Service</p>
+                  </div>
+                </div>
+                <a
+                  href="tel:18007881212"
+                  className="px-3 py-1.5 rounded-xl bg-slate-900 text-white text-[10px] font-bold hover:bg-slate-800 active:scale-95 transition"
+                >
+                  Call Support
+                </a>
+              </div>
+
+              {/* Bottom Done Button */}
+              <Button
+                onClick={() => setTrackingModalOrder(null)}
+                variant="default"
+                size="sm"
+                className="w-full py-2.5 text-xs font-bold rounded-xl shadow-xs cursor-pointer"
+              >
+                Close Tracking
+              </Button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* PDF Wholesale Invoice Modal */}
+      {/* PDF Wholesale Invoice Bottom Sheet (Native Mobile Slip Drawer) */}
       {invoiceModalOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 border border-slate-200 shadow-2xl text-slate-900 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="text-sm font-black text-slate-900">
-                  Dealer Wholesale Invoice
-                </h3>
-                <p className="text-[10px] font-mono text-slate-500">
-                  Accele Electronics Inc. • Net 30 Active
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          {/* Backdrop with blur */}
+          <div
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            onClick={() => setInvoiceModalOrder(null)}
+          />
+
+          {/* Drawer Panel */}
+          <div className="relative z-50 w-full max-w-[430px] max-h-[92dvh] flex flex-col rounded-t-[32px] border-t border-slate-200 bg-white text-slate-900 shadow-[0_-12px_40px_rgba(0,0,0,0.18)] animate-in slide-in-from-bottom duration-300">
+            {/* Grab Handle */}
+            <div className="flex justify-center pt-3 pb-1 cursor-grab">
+              <div className="h-1.5 w-12 rounded-full bg-slate-300" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                    Wholesale Invoice
+                  </h3>
+                  <Badge variant={invoiceModalOrder.status === "rma" ? "destructive" : "emerald"}>
+                    {invoiceModalOrder.status === "rma" ? "Warranty Swap" : "Net 30 Active"}
+                  </Badge>
+                </div>
+                <p className="text-[10px] text-slate-500 font-medium">
+                  Accele Electronics Inc. • Commercial Bay Billing
                 </p>
               </div>
               <button
                 onClick={() => setInvoiceModalOrder(null)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"
+                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] space-y-1.5 font-mono">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Invoice No:</span>
-                <span className="font-bold text-slate-900">{invoiceModalOrder.id}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">PO Number:</span>
-                <span className="font-bold text-slate-900">{invoiceModalOrder.poNumber}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Billed Account:</span>
-                <span className="font-bold text-slate-900">Apex 12V Autoworks</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Tax ID:</span>
-                <span className="font-bold text-slate-900">AZ-9948210-W</span>
-              </div>
-            </div>
-
-            {/* Line items */}
-            <div className="max-h-40 overflow-y-auto no-scrollbar space-y-1.5 text-xs">
-              {invoiceModalOrder.items.map((it, idx) => (
-                <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-100">
-                  <div>
-                    <p className="font-bold text-slate-900 text-[11px] truncate max-w-[190px]">
-                      {it.product.name}
-                    </p>
-                    <p className="text-[9px] text-slate-500 font-mono">
-                      {it.quantity} × ${it.product.price.toFixed(2)}
-                    </p>
+            {/* Scrollable Receipt Body */}
+            <div className="overflow-y-auto p-4 space-y-3.5 no-scrollbar flex-1">
+              {/* Receipt Slip Container */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3.5">
+                {/* Brand & Reference Bar */}
+                <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-9 w-9 rounded-xl bg-slate-900 text-white grid place-items-center shadow-xs">
+                      <Receipt className="h-4 w-4 text-[#f52538]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-slate-900 tracking-wide">ACCELE ELECTRONICS</p>
+                      <p className="text-[10px] text-slate-500">Cerritos, CA 90703 • ISO 9001</p>
+                    </div>
                   </div>
-                  <span className="font-bold text-slate-900">
-                    ${(it.quantity * it.product.price).toFixed(2)}
-                  </span>
+
+                  <div className="text-right">
+                    <div className="flex items-center gap-1.5 justify-end">
+                      <span className="font-mono text-xs font-bold text-slate-900">
+                        {invoiceModalOrder.id}
+                      </span>
+                      <button
+                        onClick={(e) => handleCopyInvoice(invoiceModalOrder.id, e)}
+                        className="p-1 rounded-md hover:bg-slate-200 text-slate-500 transition"
+                        title="Copy Invoice Number"
+                      >
+                        {copiedInvoice === invoiceModalOrder.id ? (
+                          <Check className="h-3 w-3 text-emerald-600" />
+                        ) : (
+                          <Copy className="h-3 w-3" />
+                        )}
+                      </button>
+                    </div>
+                    <p className="text-[10px] font-mono text-slate-500">{invoiceModalOrder.date}</p>
+                  </div>
                 </div>
-              ))}
-            </div>
 
-            <div className="flex justify-between items-baseline pt-2 border-t border-slate-200 font-bold text-xs">
-              <span>Total Invoice Amount:</span>
-              <span className="text-lg font-black text-[#f52538]">
-                ${invoiceModalOrder.total.toFixed(2)}
-              </span>
-            </div>
+                {/* 2x2 Commercial Account Grid */}
+                <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-[10px] text-slate-500 block">Billed Account:</span>
+                    <span className="font-bold text-slate-900 truncate block">Apex 12V Autoworks</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-[10px] text-slate-500 block">PO Number:</span>
+                    <span className="font-bold text-slate-900 truncate block">{invoiceModalOrder.poNumber}</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-[10px] text-slate-500 block">Payment Terms:</span>
+                    <span className="font-bold text-emerald-600 block">Net 30 Commercial</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200/80">
+                    <span className="text-[10px] text-slate-500 block">Tax / Resale ID:</span>
+                    <span className="font-bold text-slate-900 block">AZ-9948210-W</span>
+                  </div>
+                </div>
 
-            <Button
-              onClick={() => {
-                generateInvoicePdf(invoiceModalOrder);
-                showToast(`Downloaded Accele_Invoice_${invoiceModalOrder.id}.pdf`);
-              }}
-              variant="default"
-              size="sm"
-              className="w-full text-xs font-bold"
-            >
-              <FileText className="h-3.5 w-3.5 mr-2" /> Download Official PDF Receipt
-            </Button>
+                {/* Itemized Products */}
+                <div className="space-y-2 pt-1">
+                  <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase tracking-wider px-1">
+                    <span>Item & Description</span>
+                    <span>Total</span>
+                  </div>
+                  {invoiceModalOrder.items.map((it, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 p-2 rounded-xl bg-white border border-slate-200/80"
+                    >
+                      <div className="h-10 w-10 rounded-lg bg-slate-50 border border-slate-200 p-1 flex items-center justify-center shrink-0">
+                        <img
+                          src={it.product.image}
+                          alt={it.product.name}
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-slate-900 truncate">
+                          {it.product.name}
+                        </p>
+                        <p className="text-[10.5px] font-mono text-slate-500">
+                          {it.quantity} × ${it.product.price.toFixed(2)} • SKU: {it.product.sku}
+                        </p>
+                      </div>
+                      <span className="text-xs font-black text-slate-900 shrink-0">
+                        ${(it.quantity * it.product.price).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Calculation Breakdown & Total */}
+                <div className="p-3 rounded-xl bg-white border border-slate-200/80 space-y-2 text-xs">
+                  <div className="flex justify-between text-slate-600">
+                    <span>Subtotal:</span>
+                    <span className="font-mono font-bold">${invoiceModalOrder.total.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Wholesale Tier Discount:</span>
+                    <span className="font-bold text-emerald-600">Applied (Tier 1 Preferred)</span>
+                  </div>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Commercial Freight:</span>
+                    <span className="font-bold text-slate-900">Prepaid & Included</span>
+                  </div>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Sales Tax:</span>
+                    <span className="font-mono text-slate-500">$0.00 (Resale Exempt)</span>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex justify-between items-baseline">
+                    <span className="text-xs font-bold text-slate-900">Total Invoice Amount:</span>
+                    <span className="text-lg font-black text-[#f52538]">
+                      ${invoiceModalOrder.total.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* ISO & Bay Warranty Trust Note */}
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200/60 text-[10.5px] text-emerald-800">
+                  <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <span>Official Accele 12V Wholesale invoice certified under ISO 9001 with 3-Year Bay Protection.</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2 pt-1">
+                <Button
+                  onClick={() => {
+                    generateInvoicePdf(invoiceModalOrder);
+                    showToast(`Downloaded Accele_Invoice_${invoiceModalOrder.id}.pdf`);
+                  }}
+                  variant="default"
+                  size="sm"
+                  className="w-full py-2.5 text-xs font-bold rounded-xl shadow-xs cursor-pointer"
+                >
+                  <Download className="h-4 w-4 mr-2" /> Download Official PDF Receipt
+                </Button>
+
+                <Button
+                  onClick={() => setInvoiceModalOrder(null)}
+                  variant="outline"
+                  size="sm"
+                  className="w-full py-2 text-xs font-bold rounded-xl text-slate-600 hover:text-slate-900 cursor-pointer"
+                >
+                  Close Invoice
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}

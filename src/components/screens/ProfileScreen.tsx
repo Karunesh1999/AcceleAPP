@@ -20,7 +20,10 @@ import {
   Award,
   Camera,
   Trash2,
-  MapPin
+  MapPin,
+  CheckCircle2,
+  Truck,
+  ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { InstallationManualModal } from "@/components/InstallationManualModal";
@@ -372,6 +375,387 @@ export function ProfileScreen({
     );
   }
 
+  // Dedicated About Accele Electronics Page (Replaces dialog box)
+  if (modalType === "about") {
+    return (
+      <div className="min-h-full bg-slate-50 pb-28 text-slate-900 animate-in fade-in duration-200">
+        <header className="flex items-center justify-between px-4 py-3 bg-white sticky top-0 z-30 border-b border-slate-100 shadow-2xs">
+          <button
+            onClick={() => setModalType(null)}
+            aria-label="Back to Profile"
+            className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 active:scale-95 transition cursor-pointer"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <h1 className="text-base font-bold text-slate-900">About Accele</h1>
+          <div className="w-10" />
+        </header>
+
+        <div className="p-4 space-y-4">
+          {/* Hero Banner Card */}
+          <div className="rounded-3xl bg-white border border-slate-200/80 p-5 shadow-2xs space-y-3 relative">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#f52538] bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
+                California Bay Engineering
+              </span>
+              <span className="text-[10px] font-mono text-slate-500 font-bold">Est. 1990</span>
+            </div>
+
+            <div className="space-y-1.5">
+              <h2 className="text-xl font-black tracking-tight text-slate-900">
+                Accele Electronics Inc.
+              </h2>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Founded in Southern California, <strong>Accele Electronics Inc.</strong> is a premier manufacturer and wholesale distributor of 12-volt commercial vehicle electronics, 180° ADAS camera systems, heavy-duty linear actuators, and automotive security hardware.
+              </p>
+            </div>
+          </div>
+
+          {/* 4 Stats Grid */}
+          <div className="grid grid-cols-2 gap-2.5">
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+              <span className="text-lg font-black text-slate-900 block">30+ Yrs</span>
+              <span className="text-[11px] text-slate-500 font-medium">12V Automotive Heritage</span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+              <span className="text-lg font-black text-emerald-600 block">ISO 9001</span>
+              <span className="text-[11px] text-slate-500 font-medium">Bay Quality Certified</span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+              <span className="text-lg font-black text-sky-600 block">100%</span>
+              <span className="text-[11px] text-slate-500 font-medium">Bench Tested Units</span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+              <span className="text-lg font-black text-[#f52538] block">3-Year</span>
+              <span className="text-[11px] text-slate-500 font-medium">Bay Advance Warranty</span>
+            </div>
+          </div>
+
+          {/* Headquarters Card */}
+          <div className="rounded-3xl bg-white p-4.5 border border-slate-200/80 shadow-2xs space-y-3">
+            <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+              <div className="h-9 w-9 rounded-xl bg-sky-50 text-sky-600 grid place-items-center">
+                <Building className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-slate-900">Headquarters & Distribution Center</h3>
+                <p className="text-[10px] text-slate-500">Cerritos, California 90703, USA</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Operating out of our 45,000 sq ft facility in Cerritos, California, our engineering and quality assurance teams inspect, test, and ship thousands of commercial units every week to authorized 12V installation bays across North America.
+            </p>
+
+            <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
+              <a
+                href="tel:18007881212"
+                className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition"
+              >
+                <PhoneCall className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                <span className="font-bold truncate">(800) 788-1212</span>
+              </a>
+              <a
+                href="mailto:techsupport@accele.com"
+                className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition"
+              >
+                <Mail className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+                <span className="font-bold truncate">Tech Support</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Accele Family of Brands */}
+          <div className="rounded-3xl bg-white p-4.5 border border-slate-200/80 shadow-2xs space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <h3 className="text-xs font-bold text-slate-900">Accele Family of Brands</h3>
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Commercial 12V</span>
+            </div>
+
+            <div className="space-y-2">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-slate-900">Optix 360</p>
+                  <p className="text-[10px] text-slate-500">Commercial 180° & 360° ADAS camera systems</p>
+                </div>
+                <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">Vision</span>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-slate-900">Beüler</p>
+                  <p className="text-[10px] text-slate-500">Heavy-duty 40A/60A relays, microswitches & sockets</p>
+                </div>
+                <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">Relays</span>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-slate-900">Litt Works</p>
+                  <p className="text-[10px] text-slate-500">Commercial utility LED lightbars & warning lamps</p>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">Lighting</span>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-slate-900">Accent Mobile</p>
+                  <p className="text-[10px] text-slate-500">Overhead flip-down monitors & commercial cab media</p>
+                </div>
+                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">Cabin</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bay Support CTA */}
+          <Button
+            onClick={() => {
+              setModalType(null);
+              onOpenLiveChat();
+            }}
+            variant="default"
+            size="sm"
+            className="w-full py-3 text-xs font-bold rounded-2xl shadow-xs cursor-pointer"
+          >
+            <PhoneCall className="h-4 w-4 mr-2" /> Connect with Installer Support Desk
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Dedicated Installer & Dealer FAQ Page (Replaces dialog box)
+  if (modalType === "faq") {
+    return (
+      <div className="min-h-full bg-slate-50 pb-28 text-slate-900 animate-in fade-in duration-200">
+        <header className="flex items-center justify-between px-4 py-3 bg-white sticky top-0 z-30 border-b border-slate-100 shadow-2xs">
+          <button
+            onClick={() => setModalType(null)}
+            aria-label="Back to Profile"
+            className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 active:scale-95 transition cursor-pointer"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <h1 className="text-base font-bold text-slate-900">Installer FAQ</h1>
+          <div className="w-10" />
+        </header>
+
+        <div className="p-4 space-y-3.5">
+          <div className="rounded-2xl bg-sky-50 border border-sky-200 p-3.5 text-xs text-sky-900 space-y-1">
+            <p className="font-bold">Bay Installation Knowledge Base</p>
+            <p className="text-[11px] text-sky-700 leading-relaxed">
+              Frequently asked wiring, calibration, and wholesale questions answered by California Master Technicians.
+            </p>
+          </div>
+
+          <div className="space-y-2.5">
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+              <p className="font-bold text-slate-900 text-xs">How do I disable dynamic parking guidelines?</p>
+              <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                Locate the small green loop wire on the camera pigtail harness. Snip the loop while 12V power is disconnected, insulate both ends with heatshrink, and cycle the vehicle's ignition power.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+              <p className="font-bold text-slate-900 text-xs">How does the 180° Doppler radar calibrate?</p>
+              <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                The RVC180FM Doppler sensor is factory pre-calibrated. It auto-learns road baseline and bumper height within the first 50 feet of vehicle motion above 5 mph without requiring optical calibration mats.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+              <p className="font-bold text-slate-900 text-xs">What is Tier 1 wholesale pricing?</p>
+              <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                Authorized dealer accounts receive an automated 10% wholesale margin discount off standard MSRP on all commercial hardware orders, with Net 30 payment terms and prioritized same-day bay dispatch.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+              <p className="font-bold text-slate-900 text-xs">What are the continuous load ratings for Beüler relays?</p>
+              <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                Standard Beüler 5-pin SPDT relays are rated for 30A/40A continuous load, and heavy-duty series (e.g. 6100-LS) support up to 60A/80A inrush with silver tin-oxide contacts.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
+              <p className="font-bold text-slate-900 text-xs">Where do I find vehicle-specific wiring pinouts?</p>
+              <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                Access the "Installation & Wiring Manuals" tab in your profile to view and download full-color PDF bay schematic sheets and wire color codes.
+              </p>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => {
+              setModalType(null);
+              onOpenLiveChat();
+            }}
+            variant="default"
+            size="sm"
+            className="w-full py-3 text-xs font-bold rounded-2xl shadow-xs cursor-pointer mt-2"
+          >
+            <HelpCircle className="h-4 w-4 mr-2" /> Ask a Bay Technician
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Dedicated Warranty & RMA Policy Page (Replaces dialog box)
+  if (modalType === "privacy") {
+    return (
+      <div className="min-h-full bg-slate-50 pb-28 text-slate-900 animate-in fade-in duration-200">
+        <header className="flex items-center justify-between px-4 py-3 bg-white sticky top-0 z-30 border-b border-slate-100 shadow-2xs">
+          <button
+            onClick={() => setModalType(null)}
+            aria-label="Back to Profile"
+            className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 active:scale-95 transition cursor-pointer"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <h1 className="text-base font-bold text-slate-900">Warranty & RMA Policy</h1>
+          <div className="w-10" />
+        </header>
+
+        <div className="p-4 space-y-4">
+          {/* Hero Card */}
+          <div className="rounded-3xl bg-emerald-50/70 border border-emerald-200/80 p-5 shadow-2xs space-y-2.5">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-2.5 py-1 rounded-full border border-emerald-300">
+              Commercial Fleet Protection
+            </span>
+            <h2 className="text-lg font-black tracking-tight text-slate-900">
+              3-Year Bay Advance Replacement
+            </h2>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              All commercial equipment purchased through authorized Accele accounts carries our comprehensive 3-Year Bay Advance Replacement guarantee.
+            </p>
+          </div>
+
+          {/* Steps */}
+          <div className="rounded-3xl bg-white p-4.5 border border-slate-200/80 shadow-2xs space-y-3.5">
+            <h3 className="text-xs font-bold text-slate-900">Rapid Advance Swap Protocol</h3>
+            
+            <div className="space-y-3 text-xs">
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[11px] grid place-items-center shrink-0 mt-0.5">
+                  1
+                </div>
+                <div>
+                  <p className="font-bold text-slate-900">Instant Authorization</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Submit your serial number or order PO through Bay Support to generate an instant RMA authorization number.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[11px] grid place-items-center shrink-0 mt-0.5">
+                  2
+                </div>
+                <div>
+                  <p className="font-bold text-slate-900">Priority Cross-Shipment</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    We immediately dispatch a brand-new replacement unit before requiring the defective unit to be returned.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[11px] grid place-items-center shrink-0 mt-0.5">
+                  3
+                </div>
+                <div>
+                  <p className="font-bold text-slate-900">Prepaid Return Label</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    A prepaid UPS shipping label is enclosed in the box so you can return the swapped unit at zero freight expense.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => {
+              setModalType(null);
+              onOpenLiveChat();
+            }}
+            variant="default"
+            size="sm"
+            className="w-full py-3 text-xs font-bold rounded-2xl shadow-xs cursor-pointer"
+          >
+            <ShieldCheck className="h-4 w-4 mr-2" /> Start Rapid RMA Ticket
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Dedicated Dealer Terms of Service Page (Replaces dialog box)
+  if (modalType === "terms") {
+    return (
+      <div className="min-h-full bg-slate-50 pb-28 text-slate-900 animate-in fade-in duration-200">
+        <header className="flex items-center justify-between px-4 py-3 bg-white sticky top-0 z-30 border-b border-slate-100 shadow-2xs">
+          <button
+            onClick={() => setModalType(null)}
+            aria-label="Back to Profile"
+            className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 active:scale-95 transition cursor-pointer"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <h1 className="text-base font-bold text-slate-900">Dealer Terms of Service</h1>
+          <div className="w-10" />
+        </header>
+
+        <div className="p-4 space-y-4">
+          <div className="rounded-3xl bg-white p-4.5 border border-slate-200/80 shadow-2xs space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <div>
+                <h3 className="text-xs font-bold text-slate-900">Wholesale Commercial Terms</h3>
+                <p className="text-[10px] text-slate-500">Net 30 Commercial Account Agreement</p>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Active Tier 1
+              </span>
+            </div>
+
+            <div className="space-y-2.5 text-xs text-slate-600 leading-relaxed">
+              <p>
+                Authorized dealers in Tier 1 status are granted Net 30 wholesale credit terms. Invoices are generated at the time of bay dispatch and are payable within 30 days via ACH, wire, or commercial credit card.
+              </p>
+              <p>
+                All wholesale purchases are strictly intended for professional installation bay integration, fleet outfitting, or authorized dealership resale.
+              </p>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] font-mono text-slate-700 space-y-1">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Account:</span>
+                <span className="font-bold text-slate-900">ACC-8910-US (Apex 12V Autoworks)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Credit Line:</span>
+                <span className="font-bold text-emerald-600">$25,000 Net 30</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Tax Resale Exemption:</span>
+                <span className="font-bold text-slate-900">Verified (AZ-9948210-W)</span>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => setModalType(null)}
+            variant="outline"
+            size="sm"
+            className="w-full py-2.5 text-xs font-bold rounded-2xl text-slate-700 hover:text-slate-900 cursor-pointer"
+          >
+            Back to Profile
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-full bg-slate-50 pb-28 text-slate-900">
       {/* Toast Notification */}
@@ -645,151 +1029,6 @@ export function ProfileScreen({
           </button>
         </div>
       </div>
-
-      {/* About Accele Modal */}
-      {modalType === "about" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 border border-slate-200 shadow-2xl text-slate-900 space-y-3.5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-sm font-black text-slate-900">About Accele Electronics</h3>
-              <button
-                onClick={() => setModalType(null)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Founded in Southern California, <strong>Accele Electronics Inc.</strong> is a premier manufacturer and wholesale supplier of 12-volt commercial vehicle electronics, 180° ADAS camera systems, actuators, and security hardware.
-            </p>
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] space-y-1.5 font-medium text-slate-700">
-              <div className="flex items-center gap-2">
-                <Building className="h-3.5 w-3.5 text-sky-600 shrink-0" />
-                <span>Headquarters: Cerritos, California</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="h-3.5 w-3.5 text-amber-600 shrink-0" />
-                <span>ISO 9001:2015 Bay Quality Certified</span>
-              </div>
-            </div>
-            <Button
-              onClick={() => setModalType(null)}
-              variant="default"
-              size="sm"
-              className="w-full text-xs font-bold"
-            >
-              Close
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* FAQ Modal */}
-      {modalType === "faq" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 border border-slate-200 shadow-2xl text-slate-900 space-y-3.5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-sm font-black text-slate-900">Installer FAQ</h3>
-              <button
-                onClick={() => setModalType(null)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="max-h-60 overflow-y-auto no-scrollbar space-y-3 text-xs">
-              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                <p className="font-bold text-slate-900">How do I turn off dynamic parking guidelines?</p>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  Locate the small green loop wire on the camera pigtail harness. Snip the loop while 12V power is disconnected, insulate the ends, and cycle ignition.
-                </p>
-              </div>
-              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                <p className="font-bold text-slate-900">How does the 180° Doppler radar calibrate?</p>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  The RVC180FM Doppler sensor is factory pre-calibrated. It auto-learns road baseline within the first 50 feet of vehicle motion above 5 mph.
-                </p>
-              </div>
-              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                <p className="font-bold text-slate-900">What is Tier 1 wholesale pricing?</p>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  Authorized dealer accounts receive an automated 10% discount off standard MSRP on all commercial hardware orders.
-                </p>
-              </div>
-            </div>
-            <Button
-              onClick={() => setModalType(null)}
-              variant="default"
-              size="sm"
-              className="w-full text-xs font-bold"
-            >
-              Close FAQ
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Warranty / Privacy Modal */}
-      {modalType === "privacy" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 border border-slate-200 shadow-2xl text-slate-900 space-y-3.5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-sm font-black text-slate-900">3-Year Bay Warranty Protection</h3>
-              <button
-                onClick={() => setModalType(null)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              All commercial equipment purchased through authorized Accele accounts carries our comprehensive 3-Year Bay Advance Replacement guarantee. If a unit fails in the field, we cross-ship a replacement before receiving the return.
-            </p>
-            <Button
-              onClick={() => {
-                setModalType(null);
-                onOpenLiveChat();
-              }}
-              variant="default"
-              size="sm"
-              className="w-full text-xs font-bold"
-            >
-              Start Rapid RMA Ticket
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Terms Modal */}
-      {modalType === "terms" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 border border-slate-200 shadow-2xl text-slate-900 space-y-3.5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-sm font-black text-slate-900">Dealer Net 30 Terms</h3>
-              <button
-                onClick={() => setModalType(null)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Authorized dealers in Tier 1 status are granted Net 30 wholesale credit terms. Invoices are generated at the time of bay dispatch and are payable within 30 days via ACH, wire, or commercial card.
-            </p>
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] font-mono text-slate-700">
-              Active Account: ACC-8910-US (Apex 12V Autoworks)
-            </div>
-            <Button
-              onClick={() => setModalType(null)}
-              variant="default"
-              size="sm"
-              className="w-full text-xs font-bold"
-            >
-              Close Terms
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* Installation & Wiring Manuals Hub */}
       <InstallationManualModal
