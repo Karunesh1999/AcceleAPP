@@ -5,10 +5,8 @@ import {
   Printer, 
   Check, 
   AlertTriangle, 
-  Copy, 
   Wrench
 } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { WIRING_GUIDES, type WiringGuideData } from "@/data/wiringGuides";
 import type { Product } from "@/types";
@@ -37,7 +35,6 @@ export function InstallationManualPage({
     return initialCategory;
   });
 
-  const [copied, setCopied] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
   React.useEffect(() => {
@@ -51,32 +48,6 @@ export function InstallationManualPage({
 
   const sku = product?.sku || "AC-PRO-BAY";
   const productName = product?.name || activeGuide.title;
-
-  const handleCopyPinout = async () => {
-    const text = [
-      `ACCELE ELECTRONICS - TECHNICAL BAY MANUAL`,
-      `Document: ${activeGuide.docNumber}`,
-      `Hardware: ${sku} - ${productName}`,
-      `Standard: ${activeGuide.title} (${activeGuide.subtitle})`,
-      `----------------------------------------`,
-      ...activeGuide.pins.map(
-        (p) => `${p.label} ${p.desc} [${p.voltage}]`
-      ),
-      `----------------------------------------`,
-      `Special Bay Note: ${activeGuide.note}`,
-    ].join("\n");
-
-    try {
-      if (typeof navigator !== "undefined" && navigator.clipboard) {
-        await navigator.clipboard.writeText(text);
-      }
-      setCopied(true);
-      if (soundEnabled) playAlertBeep("click");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback
-    }
-  };
 
   const handleDownloadPdf = () => {
     try {
@@ -148,14 +119,7 @@ export function InstallationManualPage({
         </div>
 
         {/* Document Header Card */}
-        <div className="rounded-3xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded border border-sky-200">
-              {activeGuide.docNumber}
-            </span>
-            <Badge variant={activeGuide.badgeVariant}>{activeGuide.badgeText}</Badge>
-          </div>
-
+        <div className="rounded-3xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-2">
           <div>
             <h2 className="text-base font-bold text-slate-900 leading-snug">
               {activeGuide.title}
@@ -175,26 +139,10 @@ export function InstallationManualPage({
 
         {/* Pinout Schematic Section */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between px-1">
+          <div className="px-1">
             <span className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider">
               Terminal Pinout & Color Code
             </span>
-            <button
-              onClick={handleCopyPinout}
-              className="flex items-center gap-1 text-[11px] font-bold text-slate-600 hover:text-[#f52538] transition cursor-pointer"
-            >
-              {copied ? (
-                <>
-                  <Check className="h-3 w-3 text-emerald-600" />
-                  <span className="text-emerald-600">Copied</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-3 w-3" />
-                  <span>Copy Pinout</span>
-                </>
-              )}
-            </button>
           </div>
 
           <div className="rounded-3xl border border-slate-200/90 bg-white p-4 space-y-3 shadow-2xs">
